@@ -3,9 +3,9 @@ My research paper notes, focusing on data mining/recommender/reinforcement learn
 
 ## An End-to-End Neighborhood-based Interaction Model for Knowledge-enhanced Recommendation
 
-链接: [https://arxiv.org/abs/1908.04032](https://arxiv.org/abs/1908.04032)
+链接：[https://arxiv.org/abs/1908.04032](https://arxiv.org/abs/1908.04032)
 
-关键词: NI, KNI, Graph, Recommender, KDD Workshop Best Paper
+关键词：NI, KNI, Graph, Recommender, KDD Workshop Best Paper
 
 本文主要解决三个问题：
 
@@ -33,3 +33,19 @@ My research paper notes, focusing on data mining/recommender/reinforcement learn
 
 上面的讨论还是仅限于User-Item的图结构，如果我们通过引入知识图谱的信息，即更多的Entity和Relation，就可以构建KNI。相比于NI，KNI的区别就是图结构更加丰富，公式和计算过程没有改变。除此之外，KNI和NI都运用了Neighbor Sampling的技术。而也正是因为采用了NS技术，KNI/NI在Evaluation阶段会有一个类似assemble的过程，eval次数越多，sample次数越多，性能会有进一步的提升。因此，文章是每次进行40次eval，然后取平均。
 
+## User Behavior Retrieval for Click-Through Rate Prediction
+
+链接：[https://arxiv.org/abs/2005.14171](https://arxiv.org/abs/2005.14171)
+
+关键词：UBR4CTR, User Behavior Retrieval
+
+CTR预测一般会用到用户的历史信息来产生personalized的预测结果，比如DIN、DIEN都是这方面经典的工作。但是如果用户的历史信息序列过长，我们不可能把该用户所有的历史信息都一股脑放入模型进行预测，这样还带来两方面的坏处：
+
+- 运算时间过长
+- 过长的历史信息序列会包含很多的无用信息和噪声，反而不利于预测
+
+因此，目前学界、工业界常用的操作就是直接做一个截断，只把该用户最近的历史信息序列截取过来做CTR预测，这样的操作简单，但是可能会遗漏有价值的信息，比如用户的长期、周期性的行为规律。因此如果从用户特长的历史信息序列中筛选出有价值、低噪声的历史信息用于CTR预测是很重要的，本文就提出了一种基于Attention的用户历史信息筛选机制，来取代目前“简单截断历史信息序列”的粗暴方法。
+
+![KNI-eq1](./images/UBR4CTR-fig1.JPG)
+
+这其实是一种很简单但很重要的思想，即应该筛选用户的历史信息而不是简单截断。至于这个“筛选”的方法，就可以千变万化，这篇文章中提到的只是一种可能的筛选机制，比如在工业界部署上，为了简化，我们可以通过制定规则来实现筛选，比如和target item属于同一类别的item历史信息应当被重点考虑。
