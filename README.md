@@ -21,9 +21,9 @@ My research paper notes, focusing on data mining/recommender/reinforcement learn
 
 ![KNI-eq2](./images/KNI-eq2.JPG)
 
-![KNI-eq2](./images/KNI-eq3.JPG)
+![KNI-eq3](./images/KNI-eq3.JPG)
 
-![KNI-eq2](./images/KNI-eq4.JPG)
+![KNI-eq4](./images/KNI-eq4.JPG)
 
 其中矩阵A是一个系数矩阵，侧重于local structure；矩阵Z则是一对目标结点u，v的邻居的两两组合的内积矩阵，侧重于全局信息。而之前提到的Average Aggregation和Attention Aggregation，其实就是这个通式的特例，即改变矩阵A。因此我们也可以进一步对A进行改进，加入“邻居和邻居”之间的互动关系，从而得到NI模型的公式：
 
@@ -46,6 +46,6 @@ CTR预测一般会用到用户的历史信息来产生personalized的预测结�
 
 因此，目前学界、工业界常用的操作就是直接做一个截断，只把该用户最近的历史信息序列截取过来做CTR预测，这样的操作简单，但是可能会遗漏有价值的信息，比如用户的长期、周期性的行为规律。因此如果从用户特长的历史信息序列中筛选出有价值、低噪声的历史信息用于CTR预测是很重要的，本文就提出了一种基于Attention的用户历史信息筛选机制，来取代目前“简单截断历史信息序列”的粗暴方法。
 
-![KNI-eq1](./images/UBR4CTR-fig1.JPG)
+![UBR4CTR-fig1](./images/UBR4CTR-fig1.JPG)
 
 这其实是一种很简单但很重要的思想，即应该筛选用户的历史信息而不是简单截断。至于这个“筛选”的方法，就可以千变万化，这篇文章中提到的只是一种可能的筛选机制，比如在工业界部署上，为了简化，我们可以通过制定规则来实现筛选，比如和target item属于同一类别的item历史信息应当被重点考虑。
