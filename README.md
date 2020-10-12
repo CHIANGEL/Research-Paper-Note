@@ -17,17 +17,17 @@ My research paper notes, focusing on data mining/recommender/reinforcement learn
 
 接着，文章以Average Aggregation和Attention Aggregation为例，总结了目前GNN的一种通式：
 
-![KNI-eq1](./images/KNI-eq1.jpg)
+![KNI-eq1](./images/KNI-eq1.JPG)
 
-![KNI-eq2](./images/KNI-eq2.jpg)
+![KNI-eq2](./images/KNI-eq2.JPG)
 
-![KNI-eq2](./images/KNI-eq3.jpg)
+![KNI-eq2](./images/KNI-eq3.JPG)
 
-![KNI-eq2](./images/KNI-eq4.jpg)
+![KNI-eq2](./images/KNI-eq4.JPG)
 
 其中矩阵A是一个系数矩阵，侧重于local structure；矩阵Z则是一对目标结点u，v的邻居的两两组合的内积矩阵，侧重于全局信息。而之前提到的Average Aggregation和Attention Aggregation，其实就是这个通式的特例，即改变矩阵A。因此我们也可以进一步对A进行改进，加入“邻居和邻居”之间的互动关系，从而得到NI模型的公式：
 
-![KNI-eq1](./images/KNI-eq5.jpg)
+![KNI-eq1](./images/KNI-eq5.JPG)
 
 其实相对于Attention Aggregation，NI的不同就在于拼接了更多的结点信息，从而更好地利用邻居信息，一定程度上解决Early Summarization的问题。
 
