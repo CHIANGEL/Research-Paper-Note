@@ -49,3 +49,23 @@ CTR预测一般会用到用户的历史信息来产生personalized的预测结�
 ![UBR4CTR-fig1](./images/UBR4CTR-fig1.JPG)
 
 这其实是一种很简单但很重要的思想，即应该筛选用户的历史信息而不是简单截断。至于这个“筛选”的方法，就可以千变万化，这篇文章中提到的只是一种可能的筛选机制，比如在工业界部署上，为了简化，我们可以通过制定规则来实现筛选，比如和target item属于同一类别的item历史信息应当被重点考虑。
+
+## Graph Attention Networks
+
+链接：[https://arxiv.org/abs/1710.10903](https://arxiv.org/abs/1710.10903)
+
+关键词：Attention, GAT, Graph
+
+ICLR2018的工作，比GraphSage迟一年。GAT将Attention机制引入图神经网络，但和GraphSage类似，还是每次通过将目标结点的一阶邻居想自己汇总信息，来得到最新的node embedding，只不过这个“汇聚”过程不再是简单取平均，而是通过attention机制的加权平均，而attention系数则是有一个**全结点共享**的线性变化层求得：
+
+![GAT-eq1](./images/GAT-eq1.JPG)
+
+公式中，LeakyReLU及其里面的a就是那个全节点共享的线性变化层，input是目标结点i和他的一个一阶邻居j的embedding。LeakyReLU外面套的就是一个softmax，即可得到目标结点i的所有一阶邻居j的attention系数（i也算自己的一阶邻居，即添加自环self-loop）。接着通过对所有一阶邻居的加权得到目标结点i的新embedding：
+
+![GAT-eq2](./images/GAT-eq2.JPG)
+
+同时，文章还提出了一种assemble方法，来稳定GAT的学习过程，也就是简单的独立的计算多组GAT，然后通过取平均或者拼接的方式进行集成。
+
+![GAT-EQ3](./images/GAT-EQ3.JPG)
+
+![GAT-EQ4](./images/GAT-EQ4.JPG)
