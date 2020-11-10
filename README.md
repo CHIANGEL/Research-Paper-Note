@@ -5,8 +5,9 @@ My research paper notes, focusing on data mining/recommender/reinforcement learn
 
 TODO LIST:
 
-- Product-based Neural Network (Jo)
-- Metapath2vec
+- Product-based Neural Network (Conf & Journal)
+- Jumping Knowledge
+- MAGNN
 
 ## Click Models for Web Search
 
@@ -202,7 +203,7 @@ type-level aggregation结束后我们就得到了user和item的embedding，最�
 
 链接：[https://dl.acm.org/doi/10.1145/3097983.3098036](https://dl.acm.org/doi/10.1145/3097983.3098036)
 
-关键词：metapath2vec, Heterogeneous Graph, Graph Embedding, Graph Representation
+关键词：metapath2vec, Heterogeneous Graph, Graph Embedding, Representation Learning
 
 这是一篇关于graph embedding的工作，一般不会作为一个GNN模块插入Embedding层和Prediction层之间（比如GAT/GCN/GraphSage）。本文其实就是Deepwalk/node2vec系列方法在异质图上的改版，通过metapath游走来得到一系列的节点上下文，然后再用Word2Vec中的skip-gram模型进行表示学习。
 
@@ -219,3 +220,25 @@ type-level aggregation结束后我们就得到了user和item的embedding，最�
 - 虽然说是考虑异质图，但是却假设不同类型节点的embedding存在于同一个隐向量空间，这样可能会损失部分信息（对比Trans系列的工作）
 - 最致命的缺点在于，原文算法和实现算法都仅支持利用一条metapath去进行随机游走，但是在一个复杂异质图上，必然存在多种有价值的metapath。
 - 更进一步，如果我们用多条metapath去随机游走采样，那如果平衡不同metapath采样出来的节点上下文数量和重要性又会成为一个新的问题，因此不能简单地把metapath2vec从单条metapath扩展到多条metapath，这也成了该算法最致命的局限性。
+
+## Representation Learning on Graphs with Jumping Knowledge Networks
+
+链接：[https://arxiv.org/abs/1806.03536](https://arxiv.org/abs/1806.03536)
+
+关键词：Graph, Representation Learning, Deeper, JK-Nets
+
+本文的motivation是想要解决传统GCN中oversmoothing和less-information的问题。众所周知，传统的GCN不能太深，一般2层就是最优了。
+
+![JK-FIG1](./images/JK-FIG1.JPG)
+
+参考上图，我们有以下分析结论：
+
+- a处于dense core中，四步更新基本可以拿到整个graph所有节点的信息，进而引发over-smooth的问题：节点聚集更多更广的邻居信息，则表达更global/更平滑，导致很多节点的表达基本一致而没有区分性。
+- b处于边缘，即使是四步更新，能拿到的邻居信息也是寥寥无几，和a产生鲜明对比，这个问题我们称之为less-information
+- 对比b和c，只是在多加了一层（4步更新和5步更新），处于边缘的节点能拿到的节点信息就忽然倍增，甚至可能引发over-smooth的问题
+
+综上，我们很难把握合适的GCN层数，不同的节点、不同的层数都可能导致邻居信息的天差地别，因此导致“传统GCN不能太深”的问题。而这个问题的本质在于：**有的节点需要更多的local信息，有的节点需要更多的global信息，需求不同，但是传统GCN的neighbor aggregation往往是一致对待**。由此，本文提出了layer aggregation的解决方案。
+
+![JK-FIG2](./images/JK-FIG2.JPG)
+
+layer aggregation其实就是让模型自己去决定每一个节点需要什么，上图的4层GCN，底层GCN的local信息更多，高层GCN的global信息更多，而这四层的信息会一起通过顶层的layer aggregation，计算得到最终的embedding，也就是通过layer aggregation去平衡local和global的信息。上图中，纵向是neighbor aggregation，横向是layer aggregation，两种aggregation都可以多种选择，比如Average、Concat、Pooling、LSTM等。而模型之所以取名为Jumping Knowledge，是因为所有GCN层的信息，都jump到了layer aggregation层，因此得名。

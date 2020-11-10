@@ -10,6 +10,8 @@
 
 [[Link](https://dl.acm.org/doi/10.1145/3097983.3098036)] metapath2vec: Scalable Representation Learning for Heterogeneous Networks
 
+[[Link](https://arxiv.org/abs/1806.03536)] Representation Learning on Graphs with Jumping Knowledge Networks
+
 ## Graph-based Recommendation
 
 [[Link](https://arxiv.org/abs/1908.04032)] An End-to-End Neighborhood-based Interaction Model for Knowledge-enhanced Recommendation
