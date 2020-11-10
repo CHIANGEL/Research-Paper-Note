@@ -3,6 +3,11 @@ My research paper notes, focusing on data mining/recommender/reinforcement learn
 
 我的论文笔记，主要聚焦于数据挖掘、推荐系统、强化学习。这里是所有论文笔记的汇总，按照时间顺序排列（提供了关键词方便检索），同时可以去具体的分类markdown文档中检索论文。
 
+TODO LIST:
+
+- Product-based Neural Network (Jo)
+- Metapath2vec
+
 ## Click Models for Web Search
 
 链接：[Survey: Click Models for Web Search](https://www.semanticscholar.org/paper/Click-Models-for-Web-Search-Authors-%E2%80%99-version-*-Chuklin-Markov/0b19b37da5e438e6355418c726469f6a00473dc3?p2df)
@@ -163,3 +168,33 @@ TGCN比较特别的地方在于它做了两层aggregation（node-level和type-le
 type-level aggregation结束后我们就得到了user和item的embedding，最后一个简单的内积就可以求得user-item的CTR。
 
 除此之外，TGCN还提出了TransTag，其实就是在端到端训练的loss function中加入一项。具体来说，就是参考了TransE的思路，认为tag是连接user和item的一类特殊边，所以在embedding层面上，user + tag应该和item尽量接近。这一点的提出也有很形象的可解释性，user1和user2都和item1发生了交互，但他们发生交互的原因可能是不一样的，比如user1是因为价格低，user2是因为好看，而这样的区别就是由tag提供的。
+
+## Hypergraph Convolution and Hypergraph Attention
+
+链接：[https://arxiv.org/abs/1901.08150](https://arxiv.org/abs/1901.08150)
+
+关键词：Hypergraph, Attention, HyperConv, HyperAtten
+
+超图（HyperGraph）是这样的：若图中的一条边可以连接两个甚至更多的节点，那么这样的边被称为超边（HyperEdge）；由超边构成的图即为超图。比如推荐系统中，user和一个带有tag属性的item产生了交互，则我们可以认为user-item-tag是一条超边。普通的图的定义是超图的子集，因此超图本身就带有更多的信息，值得被挖掘。
+
+我们会用一个incidence matrix H去表示超图的边集合，假设超图中有N个节点，M个超边，则矩阵H的大小即为N×M，每一列代表一条超边，若一个节点在被该超边所连接，则矩阵元素记为1，否则记为0。同时会有一个形状为M×M的对角矩阵，存放每一个超边的权重（一般我们可以全部设为1）。
+
+本文中的超图卷积（Hypergraph Convolution）算子是基于两个假设：
+
+- 一条超边所连接的节点们应该有更多的信息传播
+- 一条超边的权重越高，它的信息传播越重要
+
+由此，我们可以定义单步的超图卷积算子以及其矩阵形式：
+
+![Hypergraph-FIG1](./images/Hypergraph-FIG1.JPG)
+
+![Hypergraph-FIG2](./images/Hypergraph-FIG2.JPG)
+
+因为上述公式中的HWH^T的谱没有约束，这可能导致梯度爆炸或者梯度消失，因此需要加入归一化项：
+
+![Hypergraph-FIG3](./images/Hypergraph-FIG3.JPG)
+
+![Hypergraph-FIG4](./images/Hypergraph-FIG4.JPG)
+
+之后，文章还提出了一种超图上的learnable attention结构（超图卷积本身就是一种attention，但不是learnable的），但是做了一个强假设：节点和超边是处于同一个向量空间，因此我们可以去比较节点和超边之间的相似性。最后，文章还证明了传统图卷积是超图卷积的一个特例。
+

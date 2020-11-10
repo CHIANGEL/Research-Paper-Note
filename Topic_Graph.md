@@ -6,6 +6,8 @@
 
 [[Link](https://arxiv.org/abs/1903.07293)] Heterogeneous Graph Attention Network
 
+[[Link](https://arxiv.org/abs/1901.08150)] Hypergraph Convolution and Hypergraph Attention
+
 ## Graph-based Recommendation
 
 [[Link](https://arxiv.org/abs/1908.04032)] An End-to-End Neighborhood-based Interaction Model for Knowledge-enhanced Recommendation
