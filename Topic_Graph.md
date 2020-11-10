@@ -8,6 +8,8 @@
 
 [[Link](https://arxiv.org/abs/1901.08150)] Hypergraph Convolution and Hypergraph Attention
 
+[[Link](https://dl.acm.org/doi/10.1145/3097983.3098036)] metapath2vec: Scalable Representation Learning for Heterogeneous Networks
+
 ## Graph-based Recommendation
 
 [[Link](https://arxiv.org/abs/1908.04032)] An End-to-End Neighborhood-based Interaction Model for Knowledge-enhanced Recommendation
