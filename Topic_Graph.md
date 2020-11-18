@@ -12,6 +12,8 @@
 
 [[Link](https://arxiv.org/abs/1806.03536)] Representation Learning on Graphs with Jumping Knowledge Networks
 
+[[Link](https://arxiv.org/abs/1703.06103)] Modeling Relational Data with Graph Convolutional Networks
+
 ## Graph-based Recommendation
 
 [[Link](https://arxiv.org/abs/1908.04032)] An End-to-End Neighborhood-based Interaction Model for Knowledge-enhanced Recommendation

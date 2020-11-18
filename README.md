@@ -6,7 +6,6 @@ My research paper notes, focusing on data mining/recommender/reinforcement learn
 TODO LIST:
 
 - Product-based Neural Network (Conf & Journal)
-- Jumping Knowledge
 - MAGNN
 
 ## Click Models for Web Search
@@ -199,6 +198,8 @@ type-level aggregation结束后我们就得到了user和item的embedding，最�
 
 之后，文章还提出了一种超图上的learnable attention结构（超图卷积本身就是一种attention，但不是learnable的），但是做了一个强假设：节点和超边是处于同一个向量空间，因此我们可以去比较节点和超边之间的相似性。最后，文章还证明了传统图卷积是超图卷积的一个特例。
 
+但这种hypergraph的方法有一个缺点在于，这个incidence matrix H限制了超图的大小，如果超图的超边数量上去了，很可能就会爆内存，不容易实现。
+
 ## metapath2vec: Scalable Representation Learning for Heterogeneous Networks
 
 链接：[https://dl.acm.org/doi/10.1145/3097983.3098036](https://dl.acm.org/doi/10.1145/3097983.3098036)
@@ -241,4 +242,30 @@ type-level aggregation结束后我们就得到了user和item的embedding，最�
 
 ![JK-FIG2](./images/JK-FIG2.JPG)
 
-layer aggregation其实就是让模型自己去决定每一个节点需要什么，上图的4层GCN，底层GCN的local信息更多，高层GCN的global信息更多，而这四层的信息会一起通过顶层的layer aggregation，计算得到最终的embedding，也就是通过layer aggregation去平衡local和global的信息。上图中，纵向是neighbor aggregation，横向是layer aggregation，两种aggregation都可以多种选择，比如Average、Concat、Pooling、LSTM等。而模型之所以取名为Jumping Knowledge，是因为所有GCN层的信息，都jump到了layer aggregation层，因此得名。
+layer aggregation其实就是让模型自己去决定每一个节点需要什么，上图的4层GCN，底层GCN的local信息更多，高层GCN的global信息更多，而这四层的信息会一起通过顶层的layer aggregation，计算得到最终的embedding，也就是通过layer aggregation去平衡local和global的信息。
+
+上图中，纵向是neighbor aggregation，横向是layer aggregation，两种aggregation都可以多种选择，比如Average、Concat、Pooling、LSTM等。而模型之所以取名为Jumping Knowledge，是因为所有GCN层的信息，都jump到了layer aggregation层，因此得名。
+
+## Modeling Relational Data with Graph Convolutional Networks
+
+链接：[https://arxiv.org/abs/1703.06103](https://arxiv.org/abs/1703.06103)
+
+关键词：Graph, RGCN
+
+RGCN就是根据不同类型的边进行分类聚合，核心公式就是下面这一条：
+
+![RGCN-FIG1](./images/RGCN-FIG1.JPG)
+
+对每一类型的边，有一个转换矩阵theta，对一个目标节点，它的所有邻居根据连边类型进行分别聚合，而各自类的邻居之间去简单平均。文章说RGCN可能会面临过拟合的问题，因为按照连边类型进行分别聚合需要用到多个转换矩阵，当边的类型数量很多的时候（尤其是在知识图谱这种边类型巨多的场景下），RGCN会有过多的模型参数，会带来过拟合问题。因此文章还提出了两种Regularization方法。
+
+第一种被称为basis-decomposition，所有边类型的转换矩阵都是由同一组原始矩阵的线性组合得到的：
+
+![RGCN-FIG2](./images/RGCN-FIG2.JPG)
+
+其中，这一组原始矩阵的数量也是一个超参数。本质上，这利用了参数共享的思路，每一个边类型所需要拟合的模型参数就大幅下降了。
+
+第二种被称为block-diagonal-decomposition，即每一个边类型的转换矩阵是由一系列的低维矩阵拼成的对角矩阵：
+
+![RGCN-FIG3](./images/RGCN-FIG3.JPG)
+
+不同于第一种的参数共享思路，这是从稀疏矩阵的思路出发，也不错。但实验表明，具体要不要用regularization方法、哪种regularization好，都是具体任务具体分析。
