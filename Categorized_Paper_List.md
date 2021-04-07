@@ -72,3 +72,7 @@ All papers introduced in [README.md](README.md) are categorized here into severa
 --------------------------------------------------------
 
 <h2 id="Noise_Label">Noise Label</h2>
+
+[[Link](https://arxiv.org/abs/2006.04153)] Denoising Implicit Feedback for Recommendation
+
+[[Link](https://arxiv.org/abs/1804.06872)] Co-teaching: Robust Training of Deep Neural Networks with Extremely Noisy Labels
