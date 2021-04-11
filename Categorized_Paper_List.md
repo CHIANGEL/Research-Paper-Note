@@ -25,6 +25,8 @@ All papers introduced in [README.md](README.md) are categorized here into severa
 
 [[Link](https://dl.acm.org/doi/10.1145/3340531.3411927)] TGCN: Tag Graph Convolutional Network for Tag-Aware Recommendation
 
+[[Link](https://arxiv.org/abs/1708.05031)] Neural Collaborative Filtering
+
 --------------------------------------------------------
 
 <h2 id="Sequential_Recommendation">Sequential Recommendation</h2>
@@ -75,4 +77,8 @@ All papers introduced in [README.md](README.md) are categorized here into severa
 
 [[Link](https://arxiv.org/abs/2006.04153)] Denoising Implicit Feedback for Recommendation
 
+[[Link](https://arxiv.org/abs/1706.02613)] Decoupling "when to update" from "how to update"
+
 [[Link](https://arxiv.org/abs/1804.06872)] Co-teaching: Robust Training of Deep Neural Networks with Extremely Noisy Labels
+
+[[Link](https://arxiv.org/abs/1901.04215)] How does Disagreement Help Generalization against Label Corruption?
