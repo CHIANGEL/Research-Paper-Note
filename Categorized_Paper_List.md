@@ -4,7 +4,8 @@ All papers introduced in [README.md](README.md) are categorized here into severa
 
 所有在[README.md](README.md)中介绍的论文都在这里被归类到各个Research Topics中，且一篇论文可能会在多个Topic列表中同时出现，下面是用于索引的Topic列表：
 
-- [CTR Prediction](#CTR_Prediction)
+- [CF-based Recommendation](#CF-based_Recommendation)
+- [Feature Interactions for Recommendation](#Feature_Interactions_for_Recommendation)
 - [Sequential Recommendation](#Sequential_Recommendation)
 - [Graph-based Recommendation](#Graph-based_Recommendation)
 - [User Modeling](#User_Modeling)
@@ -13,19 +14,25 @@ All papers introduced in [README.md](README.md) are categorized here into severa
 
 --------------------------------------------------------
 
-<h2 id="CTR_Prediction">CTR Prediction</h2>
+<h2 id="CF-based_Recommendation">CF-based Recommendation</h2>
+
+[[Link](https://dl.acm.org/doi/10.1145/2740908.2742726])] AutoRec: Autoencoders Meet Collaborative Filtering
+
+[[Link](https://dl.acm.org/doi/10.1145/2806416.2806527])] Deep Collaborative Filtering via Marginalized Denoising Auto-encoder
+
+[[Link](https://dl.acm.org/doi/10.1145/2835776.2835837])] Collaborative Denoising Auto-Encoders for Top-N Recommender Systems
+
+[[Link](https://arxiv.org/abs/1708.05031)] Neural Collaborative Filtering
+
+[[Link](https://arxiv.org/abs/1802.05814)] Variational Autoencoders for Collaborative Filtering
+
+--------------------------------------------------------
+
+<h2 id="Feature_Interactions_for_Recommendation">Feature Interactions for Recommendation</h2>
 
 [[Link](https://link.zhihu.com/?target=https%3A//www.csie.ntu.edu.tw/~b97053/paper/Rendle2010FM.pdf)] Factorization Machines
 
 [[Link](https://www.csie.ntu.edu.tw/~cjlin/papers/ffm.pdf)] Field-aware Factorization Machines for CTR Prediction
-
-[[Link](https://arxiv.org/abs/2005.14171)] User Behavior Retrieval for Click-Through Rate Prediction
-
-[[Link](https://arxiv.org/abs/1908.04032)] An End-to-End Neighborhood-based Interaction Model for Knowledge-enhanced Recommendation
-
-[[Link](https://dl.acm.org/doi/10.1145/3340531.3411927)] TGCN: Tag Graph Convolutional Network for Tag-Aware Recommendation
-
-[[Link](https://arxiv.org/abs/1708.05031)] Neural Collaborative Filtering
 
 --------------------------------------------------------
 

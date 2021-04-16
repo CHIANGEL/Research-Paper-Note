@@ -382,3 +382,72 @@ Decoupling算法很简单，文章用很大的篇幅从理论上讨论了这种u
 1. 利用noise sample的loss较大的特点对batch中的样本进行挑选
 2. 类似co-teaching，利用两个网络挑选各自的样本给对方进行更新
 3. 这第二点cross-update的过程中，应该尽量保证两个网络的差异性，不能让两个网络趋同，否则双网络就退化成和一个网络没有区别了
+
+## AutoRec: Autoencoders Meet Collaborative Filtering
+
+链接：[https://dl.acm.org/doi/10.1145/2740908.2742726](https://dl.acm.org/doi/10.1145/2740908.2742726)
+
+关键词：AutoRec, Collaborative Filtering, Auto-Encoder
+
+这是第一篇将深度学习和自编码器引入推荐领域的开山之作。AutoRec可以分为基于用户（user-based）和基于物品（item-based）两种，我们以item-based为例进行介绍。
+
+![AutoRec-1](./images/AutoRec-1.JPG)
+
+假设有m个用户，n个物品，则得到一个m×n的共现矩阵。对每个物品i，所有m个用户对它的评分形成一个m维的评分向量$r_i$，我们通过一个三层神经网络的自编码器（Auto-Encoder）对这n个评分向量进行自编码训练，训练得到的模型就是图中的两个网络矩阵$W$和$V$。$V$将一个高维稀疏向量$r_i$映射为一个低维稠密隐向量$h_{i}^{item}$；$W$则将$h_{i}^{item}$重新映射到m维的预测评分向量$r_i^{pred}$作为输出，这个输出就是m个用户对这个物品i的评分。
+
+Auto-Encoder和Collaborative Filtering以及Matrix Factorization的关系就在于，我们可以把$W$的每一个行向量视为训练得到的user的隐向量$h_j^{user}$，因此从物品隐向量$h_{i}^{item}$经过矩阵$W$到预测评分向量$r_i^{pred}$，其实就是物品隐向量分别和每一个用户隐向量进行内积操作，符合CF和MF的基本原理。而基于Auto-Encoder的神经网络训练则是加强了模型整体的泛化性能。当然AutoRec的缺点也很明显：
+
+1. 神经网络结构简单，表达能力不强
+2. 没有考虑更多的特征信息和特征交互
+3. 简单的AE结构，可能会学出一个identity mapping
+
+## Deep Collaborative Filtering via Marginalized Denoising Auto-encoder
+
+链接：[https://dl.acm.org/doi/10.1145/2806416.2806527](https://dl.acm.org/doi/10.1145/2806416.2806527)
+
+关键词：DCF, Collaborative Filtering, Auto-Encoder
+
+这篇文章和AutoRec的场景不同，不同点在于我们现在不仅有user-item的共现矩阵（记为$R$），还有user和item各自的特征（记为$X$和$Y$）。因为仅基于共现矩阵的方法往往会受到冷启动的影响，所以我们需要有额外的用户/物品的特征信息来辅助预测，但是这些特征向量往往是高维稀疏的，那自然而然我们就想到，可以用Auto-Encoder的结构去提取稀疏的用户/物品特征向量。
+
+![DCF-1](./images/DCF-1.JPG)
+
+AutoRec是用Auto-Encoder去提取共现矩阵的信息，但DCF是用两个独立的Auto-Encoder网络分别提取用户/物品特征矩阵中的信息，从隐层中拿到用户和物品特征向量（$X$和$Y$）在低维空间的稠密映射（$U$和$V$），接着我们要求$U$和$V$各自隐向量的内积可以和共现矩阵$R$的评分结果接近。因此整个模型的Loss Function有四项：
+
+![DCF-2](./images/DCF-2.JPG)
+
+四个Loss分别是隐向量和共现矩阵的损失、两个自编码器的损失和正则化项。论文中的自编码器选择了一种叫做Marginalized Denoising Autoencoder的自编码器，是一种普通AE的变种，我没有细看。
+
+## Collaborative Denoising Auto-Encoders for Top-N Recommender Systems
+
+链接：[https://dl.acm.org/doi/10.1145/2835776.2835837](https://dl.acm.org/doi/10.1145/2835776.2835837)
+
+关键词：CDAE, Collaborative Filtering, Auto-Encoder
+
+CDAE的应用场景和AutoRec一致，和DCF不同，即只有共现矩阵，不考虑用户或物品的特征向量。
+
+![CDAE-1](./images/CDAE-1.JPG)
+
+CDAE的整体框架和User-based AutoRec很像，输入是单个用户对所有物品的评分向量，通过三层神经网络的AE来完成从input到hidden到output的自编码过程，但是CDAE在AutoRec的基础上做了两点改进：
+
+1. 因为是user-baed，所以input除了用户对所有物品的评分，CDAE还增加了一个user-specific的用户特征向量$V_u$，即上图中的红线是user-specific，而黑线则是全局共享。因此在计算隐层向量$z_u$的公式为：
+
+![CDAE-2](./images/CDAE-2.JPG)
+   
+2. CDAE参考了Denoising Auto-Encoder(DAE)的方法，即对输入的用户评分向量进行概率为$q$的dropout（和神经网络的dropout类似，要给没置零的node乘上系数$1/(1-q)$来保证整体输入的期望不变）。Input的用户评分向量是dropout的，而user-specific vector $V_u$ 不参与dropout，因此可以让整个自编码的学习过程更加鲁棒，减少模型学成identity mapping的风险。
+
+## Variational Autoencoders for Collaborative Filtering
+
+链接：[https://arxiv.org/abs/1802.05814](https://arxiv.org/abs/1802.05814)
+
+关键词：Multi-VAE, VAE_CF, Collaborative Filtering, VAE
+
+这篇文章结合VAE和CF，使用场景和AutoRec、CDAE一样，只有共现矩阵，没有用户/物品的特征向量，并且也是基于用户的，即针对每一个用户的打分向量进行自编码。
+
+![Multi-VAE-1](./images/Multi-VAE-1.JPG)
+
+首先我们理解一下什么是VAE。上图展示了AE、DAE、VAE的区别。AE不存在sample，DAE是对input vector进行随机dropout。AE和DAE都是将input vector映射为一个固定数值的隐向量，而VAE则是将input vector映射成一个正态分布（隐向量的每一维都用一个正态的均值+方差表示），接着在这个映射得到的正态分布上sample出一个隐向量$z$，用于后续的解码操作。
+
+Multi-VAE for CF的自编码过程相较于正常的VAE，做了两点改进：
+
+1. 传统AE及其变种，都假设解码后的输出符合高斯分布，因此Loss采用的是MSE（即差的平方）；但Multi-VAE假设解码后的输出符合多项分布，因此使用的是Log Loss
+2. 作者claim损失函数中的正则化项的系数不应该是1，调成0.2之类较小的值更合适，作者称其为部分正则化（partially regularized）
