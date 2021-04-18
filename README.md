@@ -443,7 +443,7 @@ CDAE的整体框架和User-based AutoRec很像，输入是单个用户对所有�
 
 这篇文章结合VAE和CF，使用场景和AutoRec、CDAE一样，只有共现矩阵，没有用户/物品的特征向量，并且也是基于用户的，即针对每一个用户的打分向量进行自编码。
 
-![Multi-VAE-1](./images/Multi-VAE-1.JPG)
+![Multi-VAE-1](./images/Multi-VAE-1.png)
 
 首先我们理解一下什么是VAE。上图展示了AE、DAE、VAE的区别。AE不存在sample，DAE是对input vector进行随机dropout。AE和DAE都是将input vector映射为一个固定数值的隐向量，而VAE则是将input vector映射成一个正态分布（隐向量的每一维都用一个正态的均值+方差表示），接着在这个映射得到的正态分布上sample出一个隐向量$z$，用于后续的解码操作。
 
@@ -451,3 +451,29 @@ Multi-VAE for CF的自编码过程相较于正常的VAE，做了两点改进：
 
 1. 传统AE及其变种，都假设解码后的输出符合高斯分布，因此Loss采用的是MSE（即差的平方）；但Multi-VAE假设解码后的输出符合多项分布，因此使用的是Log Loss
 2. 作者claim损失函数中的正则化项的系数不应该是1，调成0.2之类较小的值更合适，作者称其为部分正则化（partially regularized）
+
+## Neural Graph Collaborative Filtering
+
+链接：[https://arxiv.org/abs/1905.08108](https://arxiv.org/abs/1905.08108)
+
+关键词：NGCF, Collaborative Filtering, Graph Embedding
+
+NGCD的思路就是把user-item的共现矩阵构建成一个user-item的二部图，然后在这个图上做GNN的消息传递（message passing）来构建user/item的embedding，最后还是通过user-item的embedding的内积来预测CTR。这user-item图上做消息传递的好处在于可以建模多跳（multi-hop）信息，其实也就是协同信息（collaborative information），比如下图中，u1和u2都点击了i2，那么u2的信息会通过二跳传递给u1。
+
+![NGCF-1](./images/NGCF-1.png)
+
+消息传递上，NGCF和传统GNN有略微的不同，NGCF不仅把src的信息更新给dst，还传递了src和dst的交互信息：
+
+![NGCF-2](./images/NGCF-2.png)
+
+信息聚合上，NGCF会额外聚集自身节点的信息，即给每个节点都添加自环：
+
+![NGCF-3](./images/NGCF-3.png)
+
+上述是一次消息传递，重复上述操作，就可以建模user-item图上的多跳信息，得到所有节点的i-hop embedding (i=1,...,n)，将这n个embedding拼接起来，就得到了节点要用于预测的embedding。预测过程还是简单的将user和item的最终的embedding做一个内积。
+
+Optimization上，不同于NeuMF中的Log Loss，NGCF优化的是pairwise BPR loss，即对一个user的positive item和negative item进行优化：
+
+![NGCF-4](./images/NGCF-4.JPG)
+![NGCF-5](./images/NGCF-5.JPG)
+
