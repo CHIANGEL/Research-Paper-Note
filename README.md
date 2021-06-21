@@ -477,3 +477,129 @@ Optimization上，不同于NeuMF中的Log Loss，NGCF优化的是pairwise BPR lo
 ![NGCF-4](./images/NGCF-4.JPG)
 ![NGCF-5](./images/NGCF-5.JPG)
 
+## Deep learning in music recommendation systems
+
+链接：[https://www.frontiersin.org/articles/10.3389/fams.2019.00044/full](https://www.frontiersin.org/articles/10.3389/fams.2019.00044/full)
+
+关键词：Music Recommendation, Deep Learning, Survey
+
+非常值得一度的survey，以此入门音乐推荐领域。这篇文章很好的概括了音乐推荐和其他推荐场景的差异点，然后从Music Information Retrieval和Sequential Music Recommendation两个子领域出发去介绍音乐推荐。
+
+## Carousel Personalization in Music Streaming Apps with Contextual Bandits
+
+链接：[https://dl.acm.org/doi/10.1145/3383313.3412217](https://dl.acm.org/doi/10.1145/3383313.3412217)
+
+关键词：Contextual Bandit, Carousel Personalization, Online Learning to Rank, Music Recommendation
+
+这篇是RecSys2020的短文，虽然论文说做的setting是Carousel Personalization，但其实就是套壳版的OLTR问题，个人认为没有值得follow的价值。
+
+1. 论文claim的contribution之一是在simulator中引入cascade的概念，但是cascade model是OLTR的一种基础CM，没有novelty。而且论文中的三种reward feedback例子和实际的代码实现有差异，容易产生误导，以为文章提到的cascade和正常的cascade model有差异，但其实代码实现上其实是一模一样的。
+2. 论文的simulator本质上就是一个pointwise的CTR model，甚至连sequential的信息都没有考虑，而OLTR中CM都能做到sequential prediction。
+3. 将问题建模成multi-arm bandit with multi plays也是正常的OLTR做法，且论文给出的policy ranker算法并无创新
+4. 论文release了一个数据集和一个simulator，但是既然和OLTR没有差异，也没有music的特质，那我们完全可以直接用Yahoo之类的经典benchmark
+
+## Exploiting Music Play Sequence for Music Recommendation
+
+链接：[https://dl.acm.org/doi/10.5555/3172077.3172400](https://dl.acm.org/doi/10.5555/3172077.3172400)
+
+关键词：song2vec, MF, word2vec
+
+用户听音乐一般都是一个session，因此可以得到一个用户的听歌音乐序列，显然这个序列上相邻的音乐是在某些特性上有相似之处的，因此本文借助word2vec的思想，学出每一首歌的embedding，那么两首歌的embedding的cosine就是这两首歌的similarity。因此学完N首歌的embedding后，我们可以用两两之间的cosine建立一个N×N的歌曲相似度矩阵。
+
+接着因为要做的任务还是给用户推荐音乐，所以base method是正常的矩阵分解算法，对user-music的共现矩阵进行矩阵分解，但是本文在通常MF objective的基础上，加入了对song similarity的限制。即对于分解出来的user vector和music vector，不仅要求user-music内积得到的rating score和共现矩阵接近，还要求music-music内积得到的相似度和歌曲相似度矩阵也接近。
+
+这是一篇17年IJCAI的文章，现在看来很normal，主要是出的早。
+
+## Online learning to rank for sequential music recommendation
+
+链接：[https://dl.acm.org/doi/abs/10.1145/3298689.3347019](https://dl.acm.org/doi/abs/10.1145/3298689.3347019)
+
+关键词：Online Learning to Rank, Counterfactual, Dueling Bandit, CDB
+
+本文focus的场景是交互式音乐推荐（next-track recommendation），也就是每次推一首歌，拿到用户的反馈，再推下一首。作者把这个场景建模为Multi Arm Bandit with Single Play问题，然后用Multi Dueling Bandit的思路去解决。但在这个场景下的问题在于，因为每次只能推一首歌，没办法像寻常OLTR的一样通过interleave的方式比对current ranker和candidate ranker的好坏，因此作者提出一种counterfactual的方法去评估不同ranker之间的优劣，具体细节不展开，同时这篇论文没有开源代码，所以实验细节部分我也没太看明白，只get了整体思路。
+
+## Contextual and Sequential User Embeddings for Large-Scale Music Recommendation
+
+链接：[https://dl.acm.org/doi/abs/10.1145/3383313.3412248](https://dl.acm.org/doi/abs/10.1145/3383313.3412248)
+
+关键词：Music Recommendation, Context, Sequence
+
+因为用户的听歌行为是可以按session进行划分的，本文发现用户在session与session之间的会有序列变化，而这个变化一部分源于context，一部分源于general preference，因此提出要在session-level去建模user preference，即在一个session开始前预测用户当前的preference，然后基于此去预测该session下用户喜欢的tracks。而之前的Sequential Music Recommendation一般指考虑intra-session的序列预测，没有考虑inter-session的preference变化。
+
+本文没有考虑music特征，是类似于IJCAI17那篇文章，直接用word2vec方法从历史音乐序列中学出了music的embedding（单位向量化），然后在之后的训练中固定music embedding不同。如此一来，文章假设user preference embedding和music embedding处于同一个向量空间，固定了music embedding，之后我们只要学出一个user preference embedding，就可以通过cosine距离找到最适合当前preference的music。
+
+每首歌的embedding都是固定的，由此我们可以对一个session的前10首歌的embedding求平均，得到overall session embedding。之所以只用前10首歌求平均，是因为dataset session平均长度为10，且一个session末尾的歌可能和session开头的user preference有差异了。同理，因为在这个session中，每首歌都一个positive or negative的反馈，因此可以分别求平均得到positive session embedding和negative session embedding。
+
+作者认为，user preference由两部分组成，一个是Long-term, context-independent preference，另一个则是sequential, context-dependent preference。前者是用户长期平均喜好，相对稳定，是基准线，后者则一定程度上影响这个基准线，使得user preference产生变化。下面我们介绍这两种preference的建模方法。
+
+对于长期喜好，我们可以采用对之前所有的overall session embedding进行加权平均，得到截至目前为止的long-term preference embedding，加权表现在距离现在更近的session对应的embedding权重更大。
+
+对于波动喜好，我们采用两个RNN去分别建模用户的positive variation和negative variation，RNN的input就是前面提到的positive/negative session embedding与一些context info的拼接向量，之后再把positive/negative hidden state拼起来过全连接层，得到波动喜好的embedding。
+
+利用attention机制对这两个preference embedding进行加权求和，得到了一个current user preference embedding，模型的优化目标则是最小化这个preference embedding和该session中tracks的cosine值。
+
+## Sequence-based context-aware music recommendation
+
+链接：[https://link.springer.com/article/10.1007/s10791-017-9317-7](https://link.springer.com/article/10.1007/s10791-017-9317-7)
+
+关键词：Music Recommendation, Context, Sequence
+
+在介绍文章之前，记录一下本文中的两个小点，我觉得很有意义：
+
+1. Context-aware Music Recommendation可以细分environment-related和user-related两类，这代表了两种不同的context，前者包括时间、地点、天气等，后者包括用户的活跃度、心情状态、年龄等。
+2. 用户听歌序列的session划分不仅考虑时间间隔，还可以考虑设备的更换。
+
+这是一篇18年的期刊论文，但是却和上面那篇RecSys2020的`Contextual and Sequential User Embeddings for Large-Scale Music Recommendation`想法撞车，只是在methodology有一点点的差别。
+
+本文的intuition和RecSys2020那篇一致，user preference分为长期不变的部分和短期波动的部分，可以分别求得对应的preference embedding。和RecSys2020那篇一样，先用word2vec求出所有music的embedding，然后固定住。因为我们可以把用户的听歌序列按session进行划分，所以究竟是在整个序列上学music embedding还是在单独的session内部学embedding呢？如此我们可以学出两种不同的music embedding，文章认为前者和long-term preference相关，后者则会跟当前session的short-term preference相关。对两种embedding分别求平均，就得到了user的两种preference embedding。
+
+基于得到的两种music embedding和两种preference embedding，作者提出四种方法去求user-music scores，方法跑不开用cosine求距离来表示相关程度，具体可以看论文。相比于RecSys2020那篇用RNN和attention建模两种preference并进行combination，这篇期刊在得到的preference embedding相对而言过于简单。但是这篇期刊比RecSys2020那篇，在求解user-music score上提出了更复杂的方法，具体哪个更好需要实验检验。
+
+## User models for multi-context-aware music recommendation
+
+链接：[https://link.springer.com/article/10.1007%2Fs11042-020-09890-7](https://link.springer.com/article/10.1007%2Fs11042-020-09890-7)
+
+关键词：Music Recommendation, Context-aware
+
+这篇文章没有考虑Sequential Music Recommendation，只考虑Context-aware Music Recommendation，但是一般的Context-aware Model一般就考虑一些时间、天气、设备之类的，这篇文章考虑了声音信息，用到了Music Information Retrieval的东西，然后把acoustic context和situation context进行结合，再做CTR的预测，而且CTR预测过程还只是简单地FM。个人感觉没有啥novelty，这可是2020年的期刊呀。
+
+## Explicit Modelling of the Implicit Short Term User Preferences for Music Recommendation
+
+链接：[https://link.springer.com/chapter/10.1007/978-3-319-76941-7_25](https://link.springer.com/chapter/10.1007/978-3-319-76941-7_25)
+
+关键词：Music Recommendation, Subsession, Short-term User Preference
+
+一般的Sequential Music Recommendation最多也就建模到session之间的粒度，但是这篇文章提出了subsession的概念，也就认为User Preference在session内部也会发生变化。而具体如何定义subsession，则是通过得到用户听歌序列上所有音乐的tags，然后根据music windows的最小支撑集得到，具体定义可以看原论文。之后的next-track prediction也就舍弃了session的概念，利用识别出来的subsession进行预测，但是这个利用subsession预测的过程我觉得有点拉胯。
+
+首先，一个subsession是多首歌的集合，我们可以用一些相关系数的算法得出两个subsession之间的similarity。那么，假设目前给出了用户之前听的q首歌，我们要去预测下一首歌想听什么，可以先识别出当前的这个subsession（记为target subsession）构成如何，然后从训练集中找出和这个subsession最相似的n个subsession（记为candidate subsession）。对，每一个candidate subsession里面的每一首歌，这首歌的得分就是该candidate和target subsession的similarty得分，一首歌在n个candidate上的得分求和，得到了这首歌在当前subsession的得分，谁得分高就推荐谁。
+
+## Representation, Exploration and Recommendation of Playlists
+
+链接：[https://link.springer.com/chapter/10.1007/978-3-030-43887-6_50](https://link.springer.com/chapter/10.1007/978-3-030-43887-6_50)
+
+关键词：Playlists Recommendation
+
+这篇文章关注的问题并非寻常的Music Recommendation，而是Playlist Recommendation。Music Recommendation是给用户推荐一首歌或者一个系统自动生成的歌单，Playlist Recommendation则是在已有的歌单里选择一个或多个推荐给用户。其实也就是如何对歌单Playlist进行embedding，这就可以大幅度参考NLP中的language model，song类比为word，playlist类比为sentence即可。文章分别提出以unsupervised的方式，用bag-of-word、RNN、bi-RNN来编码playlist，然后用于歌单推荐。
+
+## Feature-combination hybrid recommender systems for automated music playlist continuation
+
+链接：[https://link.springer.com/article/10.1007/s11257-018-9215-8](https://link.springer.com/article/10.1007/s11257-018-9215-8)
+
+关键词：Automatic Playlist Continuation, Hybrid
+
+首先需要明确，这里的Automatic Playlist Continuation不同于Personalized Music Recommendation，APC不考虑user信息，也不考虑这个playlist中有没有不合理的歌曲（即user skip），直接预测一个已有playlist之后应该接上什么音乐。所以个人认为Automatic Playlist Continuation和Sequential Music Recommendation有共同之处，但是也有差异的点。
+
+![Feature-combination-APC-1](./images/Feature-combination-APC-1.JPG)
+
+如上图所示，这篇文章将APC看成一个矩阵填充和扩展问题（Matrix Completion and Expansion），一行代表一个playlist，一列代表一首歌，1表示歌在歌单中，0则不在。这就和CF中的共现矩阵非常相似，只不过每一行代表的不是user而是playlist，我们要做也和CF相差无几，预测一个歌单还可能包含（即positive interaction）哪些歌曲。
+
+那么很显然，可以用正常的CF方法去解决这个APC问题，但是文章指出寻常CF方法会面临data sparsity和popular bias的问题，即大部分playlist和小部分热门歌曲交互，大部分歌曲只能和小部分playlist交互，这导致一些冷门歌曲没有足够的交互信息，就更难被推荐用于APC。因此作者提出应该combine歌曲本身的一些feature以应对这种类似于cold-start的问题，但是如何做到feature-combine呢，作者给出了两种方法（main contribution）。
+
+![Feature-combination-APC-2](./images/Feature-combination-APC-2.JPG)
+![Feature-combination-APC-3](./images/Feature-combination-APC-3.JPG)
+
+第一种叫做Profiles-based Playlist Continuation，即用歌曲的profiles特性去过linear或mlp等结构，然后利用playlist-song共现矩阵去做binary classification。
+
+![Feature-combination-APC-4](./images/Feature-combination-APC-4.JPG)
+
+第二种叫做Menbership-based Playlist Continuation，即同时将song profile和playlist-song matrix作为输入。这篇文章，看完后没有吸引我的地方，就提出了新方法，提升了性能，但是这个新方法我没有感受到很大的novelty。

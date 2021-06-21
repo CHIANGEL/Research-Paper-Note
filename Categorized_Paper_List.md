@@ -11,6 +11,8 @@ All papers introduced in [README.md](README.md) are categorized here into severa
 - [User Modeling](#User_Modeling)
 - [Graph Neural Network](#Graph_Neural_Network)
 - [Noise Label](#Noise_Label)
+- [Music Recommendation](#Music_Recommendation)
+- [Online Learning to Rank](#Online_Learning_to_Rank)
 
 --------------------------------------------------------
 
@@ -89,3 +91,68 @@ All papers introduced in [README.md](README.md) are categorized here into severa
 [[Link](https://arxiv.org/abs/1804.06872)] Co-teaching: Robust Training of Deep Neural Networks with Extremely Noisy Labels
 
 [[Link](https://arxiv.org/abs/1901.04215)] How does Disagreement Help Generalization against Label Corruption?
+
+--------------------------------------------------------
+
+<h2 id="Music_Recommendation">Music Recommendation</h2>
+
+[[Link](https://www.frontiersin.org/articles/10.3389/fams.2019.00044/full)] Deep learning in music recommendation systems
+
+[[Link](https://dl.acm.org/doi/10.1145/3383313.3412217)] Carousel Personalization in Music Streaming Apps with Contextual Bandits
+
+[[Link](https://dl.acm.org/doi/10.5555/3172077.3172400)] Exploiting Music Play Sequence for Music Recommendation
+
+[[Link](https://dl.acm.org/doi/abs/10.1145/3298689.3347019)] Online learning to rank for sequential music recommendation
+
+[[Link](https://dl.acm.org/doi/abs/10.1145/3383313.3412248)] Contextual and Sequential User Embeddings for Large-Scale Music Recommendation
+
+[[Link](https://link.springer.com/article/10.1007/s10791-017-9317-7)] Sequence-based context-aware music recommendation
+
+[[Link](https://link.springer.com/article/10.1007%2Fs11042-020-09890-7)] User models for multi-context-aware music recommendation
+
+[[Link](https://link.springer.com/chapter/10.1007/978-3-319-76941-7_25)] Explicit Modelling of the Implicit Short Term User Preferences for Music Recommendation
+
+[[Link](https://link.springer.com/chapter/10.1007/978-3-030-43887-6_50)] Representation, Exploration and Recommendation of Playlists
+
+[[Link](https://link.springer.com/article/10.1007/s11257-018-9215-8)] Feature-combination hybrid recommender systems for automated music playlist continuation
+
+
+<!-- 
+
+
+
+ 
+
+https://ieeexplore.ieee.org/abstract/document/8894369 A Hybrid Recommender System for Improving Automatic Playlist Continuation  这是2021的TKDE啊！
+
+https://dl.acm.org/doi/abs/10.1145/3331184.3331234 Adversarial Mahalanobis Distance-based Attentive Song Recommender for Automatic Playlist Continuation
+
+https://dl.acm.org/doi/abs/10.1145/3344257 An Analysis of Approaches Taken in the ACM RecSys Challenge 2018 for Automatic Music Playlist Continuation
+
+https://dl.acm.org/doi/abs/10.1145/3314183.3323455 Social Tags and Emotions as main Features for the Next Song To Play in Automatic Playlist Continuation
+
+https://dl.acm.org/doi/abs/10.1145/3267471.3267481 Automatic Music Playlist Continuation via Neighbor-based Collaborative Filtering and Discriminative Reweighting/Reranking
+
+https://ieeexplore.ieee.org/abstract/document/8903002 Automatic playlist generation using Convolutional Neural Networks and Recurrent Neural Networks
+
+
+
+
+http://ceur-ws.org/Vol-2225/paper2.pdf A Diversity Adjusting Strategy with Personality for Music Recommendation
+
+
+
+
+
+https://dl.acm.org/doi/10.1145/2339530.2339643 Playlist prediction via metric embedding
+
+https://ieeexplore.ieee.org/abstract/document/8078723 Music recommendation based on embedding model with user preference and context
+
+https://ieeexplore.ieee.org/abstract/document/9005695 Music Sequence Prediction with Mixture Hidden Markov Models -->
+
+
+--------------------------------------------------------
+
+<h2 id="Online_Learning_to_Rank">Online Learning to Rank</h2>
+
+[[Link](https://dl.acm.org/doi/abs/10.1145/3298689.3347019)] Online learning to rank for sequential music recommendation
