@@ -36,6 +36,18 @@ All papers introduced in [README.md](README.md) are categorized here into severa
 
 [[Link](https://www.csie.ntu.edu.tw/~cjlin/papers/ffm.pdf)] Field-aware Factorization Machines for CTR Prediction
 
+[[Link](https://arxiv.org/abs/1703.04247)] DeepFM: A Factorization-Machine based Neural Network for CTR Prediction
+
+[[Link](https://arxiv.org/abs/1611.00144)] Product-based Neural Networks for User Response Prediction
+
+[[Link](https://arxiv.org/abs/1910.05552)] Fi-GNN: Modeling Feature Interactions via Graph Neural Networks for CTR Prediction
+
+[[Link](https://arxiv.org/abs/2008.00404)] Detecting Beneficial Feature Interactions for Recommender Systems
+
+[[Link](https://arxiv.org/abs/2105.04067)] Neural Graph Matching based Collaborative Filtering
+
+[[Link](https://arxiv.org/abs/2106.06713)] AutoLoss: Automated Loss Function Search in Recommendations
+
 --------------------------------------------------------
 
 <h2 id="Sequential_Recommendation">Sequential Recommendation</h2>

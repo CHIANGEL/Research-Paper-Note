@@ -297,6 +297,26 @@ FFM在FM的基础上提出了域（Field）的概念。首先我们需要明确�
 
 缺点上，FFM因为引入了特征域的概念，计算复杂度从O(NK)上升到了O(KN^2)，训练开销大。
 
+## DeepFM: A Factorization-Machine based Neural Network for CTR Prediction
+
+链接：[https://arxiv.org/abs/1703.04247](https://arxiv.org/abs/1703.04247)
+
+关键词：DeepFM, CTR Prediction
+
+![DeepFM](./images/DeepFM.JPG)
+
+如上图，相比于FM，DeepFM就是额外加了一个MLP模块，将所有的feature embedding拼接起来喂给MLP，输出一个scalar，然后和FM的输出一起进入Output Layer。
+
+## Product-based Neural Networks for User Response Prediction
+
+链接：[https://arxiv.org/abs/1611.00144](https://arxiv.org/abs/1611.00144)
+
+关键词：PNN, CTR Prediction
+
+![PNN-1](./images/PNN-1.JPG)
+
+可以和上面的DeepFM结合起来看，PNN就是把所有的feature embedding和feature interaction（交互出来的一堆scalar）拼接起来，一起放入MLP，输出最终的预测分数。
+
 ## An Adversarial Imitation Click Model for Information Retrieval
 
 链接：[https://chiangel.github.io/files/publication/An_Adversarial_Imitation_Click_Model_for_Information_Retrieval.pdf](https://chiangel.github.io/files/publication/An_Adversarial_Imitation_Click_Model_for_Information_Retrieval.pdf)
@@ -603,3 +623,67 @@ Optimization上，不同于NeuMF中的Log Loss，NGCF优化的是pairwise BPR lo
 ![Feature-combination-APC-4](./images/Feature-combination-APC-4.JPG)
 
 第二种叫做Menbership-based Playlist Continuation，即同时将song profile和playlist-song matrix作为输入。这篇文章，看完后没有吸引我的地方，就提出了新方法，提升了性能，但是这个新方法我没有感受到很大的novelty。
+
+## Fi-GNN: Modeling Feature Interactions via Graph Neural Networks for CTR Prediction
+
+链接：[https://arxiv.org/abs/1910.05552](https://arxiv.org/abs/1910.05552)
+
+关键词：Fi-GNN, Feature Interaction, Graph Neural Network
+
+这是第一篇用图神经网络去做特征交互的工作，作者将一个data sample建模成一张图，每个特征域即为一个节点，连边即为特征交互，而每张图都是全连接的，因为特征要两两交互。在特征处理上，作者借鉴AutoInt，在embedding layer之后加入了multi-head self-attention layer，对每个特征的表征做了进一步的处理。但因为这个处理不是文章的核心贡献，这里只是提一下。
+
+![FiGNN-1](./images/FiGNN-1.JPG)
+
+如上图，作者借鉴GGNN的做法，在图上做GRU序列建模。在每一个time step，先对每个节点进行邻居聚合，如下公式所示：
+
+![FiGNN-2](./images/FiGNN-2.JPG)
+
+其中$A_{[n_j,n_i]}$是通过attention算出来的边的权值，因为不同的特征交互的重要性不同，具体算法和GAT类似。另外，上面公式中的$W_p$是所有节点和连边共享的转换矩阵，但这样模型的建模信息能力有限。最理想的方法自然是给每一个边都设置一个转换矩阵，但是资源又吃不消，所以作者采用了一个折中方案，给每个节点设置两个转换矩阵（$W_{in}$和$W_{out}$，每次的邻居聚合转换，就有该边的两个节点的矩阵得到，如下图所示：
+
+![FiGNN-3](./images/FiGNN-3.JPG)
+
+由此，我们在每个time step都得到了每个节点的表征$a_t$，然后就可以对每个节点进行GRU建模，得到每个节点的最终表征。最后，每个节点的最终表征各自过一个MLP，在通过注意力层进行加权求和，得到预测分数：
+
+![FiGNN-4](./images/FiGNN-4.JPG)
+
+## Detecting Beneficial Feature Interactions for Recommender Systems
+
+链接：[https://arxiv.org/abs/2008.00404](https://arxiv.org/abs/2008.00404)
+
+关键词：L0-SIGN, Instance-Level Feature Interaction Selection
+
+![L0-SIGN](./images/L0-SIGN.JPG)
+
+这是做Instance-Level Feature Interaction Selection的工作，和Fi-GNN一样把一个data sample建模成一个图，每个特征域是一个节点，然后在这个图上先做link prediction，以此来选择有效的特征交叉，之后再在这个非全连接的图上做特征交叉和预测。
+
+值得注意的是，为了在link prediction中学到稀疏解，作者对link prediction模块的参数采用了activation regularization，并且提供了详细的理论证明模型的有效性。
+
+## Neural Graph Matching based Collaborative Filtering
+
+链接：[https://arxiv.org/abs/2105.04067](https://arxiv.org/abs/2105.04067)
+
+关键词：GMCF, Graph Matching
+
+虽然这篇文章用到了图匹配的概念，但其实就是一篇用更复杂的特征交互方式达到更好效果的文章，只是借用图匹配的新颖概念来提升文章的novelty罢了。
+
+![GMCF_1](./images/GMCF_1.JPG)
+
+如上图，作者把每一个data sample建模成两个attribute graph，一个是用户特征的图，一个是物品特征的图，图内节点连边就是特征交互，因此两个图都是**全连接图**。中间的Node Matching based GNN其实就是特征交互。对图内的交互（即用户/物品的内部特征），作者用GNN的message passing进行，取average pooling。对两个图之间的交互（即用户特征和物品特征的交互），作者用图匹配的方法，但其实就是一个图中的节点和另一个图中的所有节点进行元素乘+简单求和，是一种很基本的交互方法。
+
+最后，通过图内和图间的交互，我们可以得到原始节点embedding、图内交互后的节点embedding和图间交互后的节点embedding，这里有一个很有意思的地方，一般我们是将这三个向量简单拼接、简单求和取平均亦或者是用注意力机制整合，但是作者用一个GRU去编码！将这三个embedding作为序列信息输入GRU，用最后的hidden state作为节点最终的embedding。
+
+最后，将用户/物品的特征图的节点向量分别进行加和，得到用户特征图和物品特征图的表征向量，然后用一个点乘得到最后的预测分数。这不就是一个区分了用户/物品特征+利用GNN做特征交互的CTR Model嘛，我觉得不提图匹配一样可以完成这个工作。
+
+## AutoLoss: Automated Loss Function Search in Recommendations
+
+链接：[https://arxiv.org/abs/2106.06713](https://arxiv.org/abs/2106.06713)
+
+关键词：AutoML, Loss Function
+
+本文做到了instance-level loss function selection。之前的工作，大多采用soft的方式，即给多个loss function赋权重，然后对多个loss加权求和，且多是全局的权重，而非instance-level。而这篇文章是用hard selection的方式，是针对不同的data sample进行计算，且是对任意CTR Model都可适用。
+
+![AutoLoss-1](./images/AutoLoss-1.JPG)
+
+上图中的DRS就是任意一个CTR Model，Controller则是额外添加的模块，它以模型预测概率和真实概率作为输入，输出对每个loss func的选择概率。之后比较重点的就在于，有了loss func的选择概率，但采样一个loss的过程是不可导的，不能参与到梯度更新。因此作者引入了gumbel-softmax，这是之前的工作，可以将这个采样的过程近似成一个可导的过程。
+
+如此一来，整体的loss selection过程就打通了，而在训练上，作者认为不能让Model和Controller在同样的data batch上训练，因为两者是高度相关的，因此在同样的batch上训练可能会过拟合。因此作者的训练策略是，Model和Controller交替训练，在valid set上训练Controller，在train set上训练Model。因为Controller只是在训练过程中提供loss选择上的指导，帮助Model学到更好的参数，因此在最后的test阶段不会参与计算推理。
