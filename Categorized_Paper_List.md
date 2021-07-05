@@ -36,6 +36,10 @@ All papers introduced in [README.md](README.md) are categorized here into severa
 
 [[Link](https://www.csie.ntu.edu.tw/~cjlin/papers/ffm.pdf)] Field-aware Factorization Machines for CTR Prediction
 
+[[Link](https://arxiv.org/abs/1606.07792)] Wide & Deep Learning for Recommender Systems
+
+[[Link](https://arxiv.org/abs/1708.05123)] Deep & Cross Network for Ad Click Predictions
+
 [[Link](https://arxiv.org/abs/1703.04247)] DeepFM: A Factorization-Machine based Neural Network for CTR Prediction
 
 [[Link](https://arxiv.org/abs/1611.00144)] Product-based Neural Networks for User Response Prediction

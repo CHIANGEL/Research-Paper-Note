@@ -297,6 +297,30 @@ FFM在FM的基础上提出了域（Field）的概念。首先我们需要明确�
 
 缺点上，FFM因为引入了特征域的概念，计算复杂度从O(NK)上升到了O(KN^2)，训练开销大。
 
+## Wide & Deep Learning for Recommender Systems
+
+链接：[https://arxiv.org/abs/1606.07792](https://arxiv.org/abs/1606.07792)
+
+关键词：Wide & Deep, CTR Prediction
+
+![WideDeep](./images/WideDeep.JPG)
+
+Wide部分是类似逻辑回归的简单模型，具备**记忆能力**，即模型直接学习并利用历史数据（共现频率）的能力。Deep部分是深度神经网络等复杂模型，具备**泛化能力**，即发掘稀疏或未出现的稀有特征以及标签相关性的能力。Deep部分就是将各类数值特征和离散特征embedding拼起来，一起过MLP。Wide部分则会有特征筛选的过程，人工选出需要被直接利用的特征，进入单层模型（比如LR）。
+
+## Deep & Cross Network for Ad Click Predictions
+
+链接：[https://arxiv.org/abs/1708.05123](https://arxiv.org/abs/1708.05123)
+
+关键词：DCN, CTR Prediction
+
+![DCN-1](./images/DCN-1.JPG)
+
+DCN改进了Wide&Deep中的Wide部分，用Cross Network来代替原本的LR，使得Wide部分具备了自动特征交叉的能力，这个改进方向和DeepFM是一致的，只是两个工作对Wide部分的改进方案不同。DCN的Cross Net的核心公式如下图所示：
+
+![DCN-2](./images/DCN-2.JPG)
+
+每层Cross都仅增加一个n维的权重向量$w$，并且每次都有原始输入$x_0$，使得输入输出的差距不会很大。相比于Wide&Deep，DCN因为有了自动特征交叉的能力，所以不需要做人工的特征筛选，并且多层Cross的设计可以建模高阶特征交叉，是一大改进。至于具体Cross Net如何做到高阶特征交叉，这篇知乎文章给出了一个详细的例子，可以参考：[https://zhuanlan.zhihu.com/p/55234968](https://zhuanlan.zhihu.com/p/55234968)。
+
 ## DeepFM: A Factorization-Machine based Neural Network for CTR Prediction
 
 链接：[https://arxiv.org/abs/1703.04247](https://arxiv.org/abs/1703.04247)
@@ -305,7 +329,7 @@ FFM在FM的基础上提出了域（Field）的概念。首先我们需要明确�
 
 ![DeepFM](./images/DeepFM.JPG)
 
-如上图，相比于FM，DeepFM就是额外加了一个MLP模块，将所有的feature embedding拼接起来喂给MLP，输出一个scalar，然后和FM的输出一起进入Output Layer。
+如上图，相比于FM，DeepFM就是额外加了一个MLP模块，将所有的feature embedding拼接起来喂给MLP，输出一个scalar，然后和FM的输出一起进入Output Layer。DeepFM是针对Wide&Deep的Wide部分进行了改进，用FM代替了原来的LR，增加了Wide部分的自动特征交叉的能力。这个改进方向和DCN是一致的，都是增强了Wide部分的自动特征交叉能力，只是DeepFM用了FM，而DCN则是用了多层Cross Network，具体谁好谁坏，要看场景和数据集了。
 
 ## Product-based Neural Networks for User Response Prediction
 
