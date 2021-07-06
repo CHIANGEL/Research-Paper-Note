@@ -13,6 +13,7 @@ All papers introduced in [README.md](README.md) are categorized here into severa
 - [Noise Label](#Noise_Label)
 - [Music Recommendation](#Music_Recommendation)
 - [Online Learning to Rank](#Online_Learning_to_Rank)
+- [Machine Learning](#Machine_Learning)
 
 --------------------------------------------------------
 
@@ -172,3 +173,9 @@ https://ieeexplore.ieee.org/abstract/document/9005695 Music Sequence Prediction 
 <h2 id="Online_Learning_to_Rank">Online Learning to Rank</h2>
 
 [[Link](https://dl.acm.org/doi/abs/10.1145/3298689.3347019)] Online learning to rank for sequential music recommendation
+
+--------------------------------------------------------
+
+<h2 id="Machine_Learning">Machine Learning</h2>
+
+[[Link](https://arxiv.org/abs/2106.14448)] R-Drop: Regularized Dropout for Neural Networks

@@ -711,3 +711,15 @@ Optimization上，不同于NeuMF中的Log Loss，NGCF优化的是pairwise BPR lo
 上图中的DRS就是任意一个CTR Model，Controller则是额外添加的模块，它以模型预测概率和真实概率作为输入，输出对每个loss func的选择概率。之后比较重点的就在于，有了loss func的选择概率，但采样一个loss的过程是不可导的，不能参与到梯度更新。因此作者引入了gumbel-softmax，这是之前的工作，可以将这个采样的过程近似成一个可导的过程。
 
 如此一来，整体的loss selection过程就打通了，而在训练上，作者认为不能让Model和Controller在同样的data batch上训练，因为两者是高度相关的，因此在同样的batch上训练可能会过拟合。因此作者的训练策略是，Model和Controller交替训练，在valid set上训练Controller，在train set上训练Model。因为Controller只是在训练过程中提供loss选择上的指导，帮助Model学到更好的参数，因此在最后的test阶段不会参与计算推理。
+
+## R-Drop: Regularized Dropout for Neural Networks
+
+链接：[https://arxiv.org/abs/2106.14448](https://arxiv.org/abs/2106.14448)
+
+关键词：R-Drop, Regularization
+
+![R-Drop-1](./images/R-Drop-1.JPG)
+
+我是通过一篇博客文章了解到了这篇工作，[https://kexue.fm/archives/8496](https://kexue.fm/archives/8496)。R-Drop的思路很简单，因为training阶段dropout的存在，同样的batch data过两次model会得到两个不同的结果，在原有loss的基础上，R-Drop加上了一个KL Div Loss，要求这两次不同的结果（概率分布）要尽量接近。
+
+这篇博文在理论上给出了很合理的解释（相比原论文而言），同时，原论文的ablation study也很好解答了我关于R-Drop的细节，比如两次dropout的概率如果不同会怎么样，能不能多次dropout（比如3/4/5次）等。
