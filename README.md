@@ -718,7 +718,7 @@ Optimization上，不同于NeuMF中的Log Loss，NGCF优化的是pairwise BPR lo
 
 关键词：R-Drop, Regularization
 
-![R-Drop-1](./images/R-Drop-1.JPG)
+![R-Drop-1](./images/R-Drop-1.png)
 
 我是通过一篇博客文章了解到了这篇工作，[https://kexue.fm/archives/8496](https://kexue.fm/archives/8496)。R-Drop的思路很简单，因为training阶段dropout的存在，同样的batch data过两次model会得到两个不同的结果，在原有loss的基础上，R-Drop加上了一个KL Div Loss，要求这两次不同的结果（概率分布）要尽量接近。
 
