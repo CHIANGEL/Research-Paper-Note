@@ -355,7 +355,24 @@ CIN每一层也是将上一层的输出和原始特征作为输入，输出$H_k$
 
 相比于CrossNet，CIN的第n层是输出了n+1阶特征交互，CrossNet则是输出了1~n+1阶的特征交互。因此CrossNet只需要最后一层作为输出，而CIN是所有层的输出拼接作为总输出，都代表1~n+1阶的特征交互。造成这一点差异的原因是，CrossNet除了原始特征和上一层输出的交互外，每一层还会额外加上原始特征。在最后的output layer，CIN会对每一层的$H_k$个向量进行sum pooling，即求和得到一个向量，然后将k层k个向量拼起来，作为最终的特征交互向量。
 
-另外，可以把FM理解为是CIN的一种特例，当CIN只有一层，该层只输出一个向量，且权重矩阵均为1，就等价于FM的二阶特征交互了。
+另外，可以把FM理解为是CIN的一种特例，当CIN只有一层，该层只输出一个向量，且权重矩阵均为1，就等价于FM的二阶特征交互了。CIN只是xDeepFM的核心模块，还可以拼上DeepFM的MLP和FM，或者其他模块，组成最后的xDeepFM。
+
+## AutoInt: Automatic Feature Interaction Learning via Self-Attentive Neural Networks
+
+链接：[https://arxiv.org/abs/1810.11921](https://arxiv.org/abs/1810.11921)
+
+关键词：AutoInt, Multi-head Self-attention
+
+AutoInt和xDeepFM一样提出了一个核心模块Interacting layer，利用multi-head self-attention去做特征交叉，这个核心模块和拼上DNN或者FM，最终整合得到预测分数。这个interacting layer如下所示：
+
+![AutoInt-1](./images/AutoInt-1.JPG)
+
+![AutoInt-2](./images/AutoInt-2.JPG)
+
+对每一个特征，用着自己做key，和其他特征交互得到alpha，然后加权求和。因为是multi-head，所以每个特征有H个交互结果，作者将它们进行拼接，最后用residual的方式重新加回给原始特征向量。DeepCrossing和AutoInt都有残差的设计，但DeepCrossing只是用了简单的MLP，性能上不如AutoInt。
+
+![AutoInt-3](./images/AutoInt-3.JPG)
+
 
 ## An Adversarial Imitation Click Model for Information Retrieval
 
