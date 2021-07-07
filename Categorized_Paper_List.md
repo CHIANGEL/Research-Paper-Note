@@ -45,6 +45,8 @@ All papers introduced in [README.md](README.md) are categorized here into severa
 
 [[Link](https://arxiv.org/abs/1611.00144)] Product-based Neural Networks for User Response Prediction
 
+[[Link](https://arxiv.org/abs/1803.05170)] xDeepFM: Combining Explicit and Implicit Feature Interactions for Recommender Systems
+
 [[Link](https://arxiv.org/abs/1910.05552)] Fi-GNN: Modeling Feature Interactions via Graph Neural Networks for CTR Prediction
 
 [[Link](https://arxiv.org/abs/2008.00404)] Detecting Beneficial Feature Interactions for Recommender Systems

@@ -341,6 +341,22 @@ DCN改进了Wide&Deep中的Wide部分，用Cross Network来代替原本的LR，�
 
 可以和上面的DeepFM结合起来看，PNN就是把所有的feature embedding和feature interaction（交互出来的一堆scalar）拼接起来，一起放入MLP，输出最终的预测分数。
 
+## xDeepFM: Combining Explicit and Implicit Feature Interactions for Recommender Systems
+
+链接：[https://arxiv.org/abs/1803.05170](https://arxiv.org/abs/1803.05170)
+
+关键词：xDeepFM, CIN, CTR Prediction
+
+xDeepFM应该来说算是DCN的近亲，而非和DeepFM关系紧密。DCN和DeepFM都是针对Wide&Deep中的wide部分进行改进，DeepFM用了FM做特征交互，DCN则用CrossNet做特征交互。FM建模二阶，CrossNet则由层数决定几阶特征。FM建模vector-wise的交互，而CrossNet是bit-wise的交互。而xDeepFM提出的CIN模块，希望做到类似CrossNet，但建模vector-wise的特征交互。
+
+![xDeepFM](./images/xDeepFM.JPG)
+
+CIN每一层也是将上一层的输出和原始特征作为输入，输出$H_k$个向量。我们首先把原始特征向量(m个)和上一层的输出向量(n个)进行两两的element-wise product，得到m*n个交互向量；我们为这一层维护$H_k$个权重矩阵，输出的$H_k$个向量，就是这些交互向量的$H_k$中加权求和向量。同层不同vector的区别仅仅在于不同的加和权重矩阵，我们可以提前计算好两两向量间元素乘的结果。CIN名字中的Compressed就源于此，即对一系列向量进行“压缩”。
+
+相比于CrossNet，CIN的第n层是输出了n+1阶特征交互，CrossNet则是输出了1~n+1阶的特征交互。因此CrossNet只需要最后一层作为输出，而CIN是所有层的输出拼接作为总输出，都代表1~n+1阶的特征交互。造成这一点差异的原因是，CrossNet除了原始特征和上一层输出的交互外，每一层还会额外加上原始特征。在最后的output layer，CIN会对每一层的$H_k$个向量进行sum pooling，即求和得到一个向量，然后将k层k个向量拼起来，作为最终的特征交互向量。
+
+另外，可以把FM理解为是CIN的一种特例，当CIN只有一层，该层只输出一个向量，且权重矩阵均为1，就等价于FM的二阶特征交互了。
+
 ## An Adversarial Imitation Click Model for Information Retrieval
 
 链接：[https://chiangel.github.io/files/publication/An_Adversarial_Imitation_Click_Model_for_Information_Retrieval.pdf](https://chiangel.github.io/files/publication/An_Adversarial_Imitation_Click_Model_for_Information_Retrieval.pdf)
