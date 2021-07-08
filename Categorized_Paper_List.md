@@ -37,7 +37,15 @@ All papers introduced in [README.md](README.md) are categorized here into severa
 
 [[Link](https://www.csie.ntu.edu.tw/~cjlin/papers/ffm.pdf)] Field-aware Factorization Machines for CTR Prediction
 
+[[Link](https://arxiv.org/abs/1708.04617)] Attentional Factorization Machines: Learning the Weight of Feature Interactions via Attention Networks
+
+[[Link](https://dl.acm.org/doi/10.1145/2939672.2939704)] Deep Crossing: Web-Scale Modeling without Manually Crafted Combinatorial Features
+
+[[Link](https://arxiv.org/abs/1601.02376)] Deep Learning over Multi-field Categorical Data: A Case Study on User Response Prediction
+
 [[Link](https://arxiv.org/abs/1606.07792)] Wide & Deep Learning for Recommender Systems
+
+[[Link](https://arxiv.org/abs/1708.05027)] Neural Factorization Machines for Sparse Predictive Analytics
 
 [[Link](https://arxiv.org/abs/1708.05123)] Deep & Cross Network for Ad Click Predictions
 

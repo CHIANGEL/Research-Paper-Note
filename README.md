@@ -297,6 +297,38 @@ FFM在FM的基础上提出了域（Field）的概念。首先我们需要明确�
 
 缺点上，FFM因为引入了特征域的概念，计算复杂度从O(NK)上升到了O(KN^2)，训练开销大。
 
+## Attentional Factorization Machines: Learning the Weight of Feature Interactions via Attention Networks
+
+链接：[https://arxiv.org/abs/1708.04617](https://arxiv.org/abs/1708.04617)
+
+关键词：AFM
+
+![AFM-1](./images/AFM-1.JPG)
+
+![AFM-2](./images/AFM-2.JPG)
+
+AFM就是在FM的基础上，给每一个二阶特征交互学一个attention系数，然后加权求和。
+
+## Deep Crossing: Web-Scale Modeling without Manually Crafted Combinatorial Features
+
+链接：[https://dl.acm.org/doi/10.1145/2939672.2939704](https://dl.acm.org/doi/10.1145/2939672.2939704)
+
+关键词：DeepCrossing
+
+![DeepCrossing](./images/DeepCrossing.JPG)
+
+![DeepCrossing-2](./images/DeepCrossing-2.JPG)
+
+DeepCrossing就是最简单的DNN，将所有的embedding拼起来，然后一起过MLP。而在MLP中，作者采用了residual的结构。
+
+## Deep Learning over Multi-field Categorical Data: A Case Study on User Response Prediction
+
+链接：[https://arxiv.org/abs/1601.02376](https://arxiv.org/abs/1601.02376)
+
+关键词：FNN
+
+FNN的结构和DeepCrossing基本一致，就是embedding拼接+MLP，只是MLP中不存在residual结构。FNN最大的不同在于，它用FM训练好的参数对feature embedding进行了初始化，加速模型的收敛，以及优化模型性能。
+
 ## Wide & Deep Learning for Recommender Systems
 
 链接：[https://arxiv.org/abs/1606.07792](https://arxiv.org/abs/1606.07792)
@@ -306,6 +338,18 @@ FFM在FM的基础上提出了域（Field）的概念。首先我们需要明确�
 ![WideDeep](./images/WideDeep.JPG)
 
 Wide部分是类似逻辑回归的简单模型，具备**记忆能力**，即模型直接学习并利用历史数据（共现频率）的能力。Deep部分是深度神经网络等复杂模型，具备**泛化能力**，即发掘稀疏或未出现的稀有特征以及标签相关性的能力。Deep部分就是将各类数值特征和离散特征embedding拼起来，一起过MLP。Wide部分则会有特征筛选的过程，人工选出需要被直接利用的特征，进入单层模型（比如LR）。
+
+## Neural Factorization Machines for Sparse Predictive Analytics
+
+链接：[https://arxiv.org/abs/1708.05027](https://arxiv.org/abs/1708.05027)
+
+关键词：NFM
+
+![NFM-1](./images/NFM-1.JPG)
+
+![NFM-2](./images/NFM-2.JPG)
+
+之前WideDeep、DeepCrossing之类的模型结构，都只是将embedding简单拼接然后过MLP，以此学习特征交叉，但是这样可能学得不好，因为是简单拼接。因此NFM提出一种Bi-interaction Pooling操作，将embedding以优于简单拼接的方式结合起来，然后过MLP。一句话概括就是，所有embedding vector两两做元素乘，然后全部加和，n个k维向量最后压缩成一个k维向量。这个核心模块取代了FM的二阶特征交叉部分，FM的一阶线性部分则保留，最终得到NFM的结构。
 
 ## Deep & Cross Network for Ad Click Predictions
 
@@ -353,7 +397,7 @@ xDeepFM应该来说算是DCN的近亲，而非和DeepFM关系紧密。DCN和Deep
 
 CIN每一层也是将上一层的输出和原始特征作为输入，输出$H_k$个向量。我们首先把原始特征向量(m个)和上一层的输出向量(n个)进行两两的element-wise product，得到m*n个交互向量；我们为这一层维护$H_k$个权重矩阵，输出的$H_k$个向量，就是这些交互向量的$H_k$中加权求和向量。同层不同vector的区别仅仅在于不同的加和权重矩阵，我们可以提前计算好两两向量间元素乘的结果。CIN名字中的Compressed就源于此，即对一系列向量进行“压缩”。
 
-相比于CrossNet，CIN的第n层是输出了n+1阶特征交互，CrossNet则是输出了1~n+1阶的特征交互。因此CrossNet只需要最后一层作为输出，而CIN是所有层的输出拼接作为总输出，都代表1~n+1阶的特征交互。造成这一点差异的原因是，CrossNet除了原始特征和上一层输出的交互外，每一层还会额外加上原始特征。在最后的output layer，CIN会对每一层的$H_k$个向量进行sum pooling，即求和得到一个向量，然后将k层k个向量拼起来，作为最终的特征交互向量。
+相比于CrossNet，CIN的第n层是输出了n+1阶特征交互，CrossNet则是输出了1至n+1阶的特征交互。因此CrossNet只需要最后一层作为输出，而CIN是所有层的输出拼接作为总输出，都代表1~n+1阶的特征交互。造成这一点差异的原因是，CrossNet除了原始特征和上一层输出的交互外，每一层还会额外加上原始特征。在最后的output layer，CIN会对每一层的$H_k$个向量进行sum pooling，即求和得到一个向量，然后将k层k个向量拼起来，作为最终的特征交互向量。
 
 另外，可以把FM理解为是CIN的一种特例，当CIN只有一层，该层只输出一个向量，且权重矩阵均为1，就等价于FM的二阶特征交互了。CIN只是xDeepFM的核心模块，还可以拼上DeepFM的MLP和FM，或者其他模块，组成最后的xDeepFM。
 
