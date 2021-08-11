@@ -814,3 +814,14 @@ Optimization上，不同于NeuMF中的Log Loss，NGCF优化的是pairwise BPR lo
 add-version是将generated feature也视为独立feature，将所有独立feature进行两两交叉。sum-version则是将original feature和其对应的generated features进行加和，得到final features，然后进行FM的两两交叉。product-version也是把original feature和对应的generated features，方式是元素点乘+LayerNorm。
 
 但是本文的实验部分其实并不让我满意。首先Leaf-FM的feature generation就是应用到了FM模型，对Deep一类的FM模型是否有效并没有实验结果，这很局限。而且Leaf-FM并没有在所有数据集上打败DeepFM等Deep模型，仅仅是Leaf-FM会比FM甚至FFM优秀，这不足以证明本文feature generation方法的通用性和可用性。
+
+## Feature Generation by Convolutional Neural Network for Click-Through Rate Prediction
+
+链接：[https://arxiv.org/abs/1904.04447](https://arxiv.org/abs/1904.04447)
+
+关键词：FGCNN, Feature Generation
+
+![FGCNN](./images/FGCNN.JPG)
+
+因为看了上面的Leaf-FM，想到FGCNN也是做feature generation的，而且要完善且novel不少。FGCNN把所有raw features拼成一个embedding
+table，用CNN+Pooling+FC处理，得到一系列新的embedding table，因为这里CNN的kernel都是nx1的，所以不会改变feature embedding的长度（列数）。最后，所有raw feature和generated feature均可视为独立feature，利用诸如DeepFM、IPNN等经典FM模型做预测即可。实验表明，这种feature generation可以提升各类FM的性能，显然在通用性上比上面的Leaf-FM优异。

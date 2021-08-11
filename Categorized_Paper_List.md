@@ -67,6 +67,8 @@ All papers introduced in [README.md](README.md) are categorized here into severa
 
 [[Link](https://arxiv.org/abs/2107.12024)] Leaf-FM: A Learnable Feature Generation Factorization Machine for Click-Through Rate Prediction
 
+[[Link](https://arxiv.org/abs/1904.04447)] Feature Generation by Convolutional Neural Network for Click-Through Rate Prediction
+
 --------------------------------------------------------
 
 <h2 id="Sequential_Recommendation">Sequential Recommendation</h2>
