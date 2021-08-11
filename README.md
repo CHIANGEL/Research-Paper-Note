@@ -800,3 +800,17 @@ Optimization上，不同于NeuMF中的Log Loss，NGCF优化的是pairwise BPR lo
 我是通过一篇博客文章了解到了这篇工作，[https://kexue.fm/archives/8496](https://kexue.fm/archives/8496)。R-Drop的思路很简单，因为training阶段dropout的存在，同样的batch data过两次model会得到两个不同的结果，在原有loss的基础上，R-Drop加上了一个KL Div Loss，要求这两次不同的结果（概率分布）要尽量接近。
 
 这篇博文在理论上给出了很合理的解释（相比原论文而言），同时，原论文的ablation study也很好解答了我关于R-Drop的细节，比如两次dropout的概率如果不同会怎么样，能不能多次dropout（比如3/4/5次）等。
+
+## Leaf-FM: A Learnable Feature Generation Factorization Machine for Click-Through Rate Prediction
+
+链接：[https://arxiv.org/abs/2107.12024](https://arxiv.org/abs/2107.12024)
+
+关键词：Leaf-FM, Feature Generation
+
+![Leaf-FM](./images/Leaf-FM.JPG)
+
+这是一篇2021年7月的preprint，看的时候还没中稿归宿。本文就是给FM加上feature generation，来丰富特征。如果是人工特征工程，对连续特征可以采取类似平方、开方之类的处理生成新特征，但需要人工设计，不太现实；对离散特征更是无从下手。因此本文就是通过一个two-layer fc对每个feature embedding进行转换，即得到一个generated feature，且对同一feature embedding可以生成多个generated feature，类似attention中的multi-head。得到一系列feature和generated feature后，本文给出了三种结合到FM模型中的方法：add-version、sum-version、product-version。
+
+add-version是将generated feature也视为独立feature，将所有独立feature进行两两交叉。sum-version则是将original feature和其对应的generated features进行加和，得到final features，然后进行FM的两两交叉。product-version也是把original feature和对应的generated features，方式是元素点乘+LayerNorm。
+
+但是本文的实验部分其实并不让我满意。首先Leaf-FM的feature generation就是应用到了FM模型，对Deep一类的FM模型是否有效并没有实验结果，这很局限。而且Leaf-FM并没有在所有数据集上打败DeepFM等Deep模型，仅仅是Leaf-FM会比FM甚至FFM优秀，这不足以证明本文feature generation方法的通用性和可用性。
