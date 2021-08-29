@@ -8,6 +8,7 @@ All papers introduced in [README.md](README.md) are categorized here into severa
 - [Feature Interactions for Recommendation](#Feature_Interactions_for_Recommendation)
 - [Sequential Recommendation](#Sequential_Recommendation)
 - [Graph-based Recommendation](#Graph-based_Recommendation)
+- [Search-based Recommendation](#Search-based_Recommendation)
 - [User Modeling](#User_Modeling)
 - [Graph Neural Network](#Graph_Neural_Network)
 - [Noise Label](#Noise_Label)
@@ -82,6 +83,14 @@ All papers introduced in [README.md](README.md) are categorized here into severa
 [[Link](https://arxiv.org/abs/1908.04032)] An End-to-End Neighborhood-based Interaction Model for Knowledge-enhanced Recommendation
 
 [[Link](https://dl.acm.org/doi/10.1145/3340531.3411927)] TGCN: Tag Graph Convolutional Network for Tag-Aware Recommendation
+
+[[Link](https://arxiv.org/abs/2108.09127)] TabGNN: Multiplex Graph Neural Network for Tabular Data Prediction
+
+--------------------------------------------------------
+
+<h2 id="Search-based_Recommendation">Search-based Recommendation</h2>
+
+[[Link](https://arxiv.org/abs/2108.09127)] TabGNN: Multiplex Graph Neural Network for Tabular Data Prediction
 
 --------------------------------------------------------
 

@@ -825,3 +825,15 @@ add-version是将generated feature也视为独立feature，将所有独立featur
 
 因为看了上面的Leaf-FM，想到FGCNN也是做feature generation的，而且要完善且novel不少。FGCNN把所有raw features拼成一个embedding
 table，用CNN+Pooling+FC处理，得到一系列新的embedding table，因为这里CNN的kernel都是nx1的，所以不会改变feature embedding的长度（列数）。最后，所有raw feature和generated feature均可视为独立feature，利用诸如DeepFM、IPNN等经典FM模型做预测即可。实验表明，这种feature generation可以提升各类FM的性能，显然在通用性上比上面的Leaf-FM优异。
+
+## TabGNN: Multiplex Graph Neural Network for Tabular Data Prediction
+
+链接：[https://arxiv.org/abs/2108.09127](https://arxiv.org/abs/2108.09127)
+
+关键词：TabGNN, Sample Relation
+
+TabGNN的目标也是去利用data sample的relation，所以我在目录中把它归入Search-based Recommendation。基础思想上，对于表格数据，我们将一个data sample视为一个节点，假设有K个field，那就构造K个图；每个图的节点相同，第k个图的连边是依据第k个field表现出的关系。比如第k张图是education，那么具有相同education的data sample节点都会连边，连边即代表data sample之间在该field上的相似性。而相似性的评判有很多种，比如categorical field就是相同即连边，numerical field则是差值小于一定值即可连边。而K个field对应K个图，也就是论文标题中Multiplex的来源，一个图即为一个plex，也可称为layer。
+
+图构造完毕，接着就是寻常的GNN Aggregation，先在K个图上做Intra-layer Aggregation，得到所有data sample的aggregated representation，假设有N个sample，那么就会得到K * N个sample。之后再做Inter-layer Aggregation，将一个data sample的K个representation进行聚合，得到N个sample的N个representation。而这两个aggregation的图聚合方法有多种选择，比如GAT、GCN、GraphSage都是可行的。
+
+至此为止，TabGNN的核心就结束了，我们通过一系列GNN操作，从N个data sample的raw representation，得到了N个aggregated representation（有点类似于feature generation了哈哈哈）。这N个aggregated representation会和raw representation一起进入任意一个预测模型，比如论文中AutoFE，或者其他FM系列。因此TabGNN可以作为一个插件为其他模型提点。
