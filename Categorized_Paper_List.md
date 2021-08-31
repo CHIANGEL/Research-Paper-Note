@@ -90,6 +90,8 @@ All papers introduced in [README.md](README.md) are categorized here into severa
 
 <h2 id="Search-based_Recommendation">Search-based Recommendation</h2>
 
+[[Link](https://arxiv.org/abs/2108.05252)] Retrieval & Interaction Machine for Tabular Data Prediction
+
 [[Link](https://arxiv.org/abs/2108.09127)] TabGNN: Multiplex Graph Neural Network for Tabular Data Prediction
 
 --------------------------------------------------------

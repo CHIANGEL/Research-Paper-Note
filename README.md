@@ -837,3 +837,25 @@ TabGNN的目标也是去利用data sample的relation，所以我在目录中把�
 图构造完毕，接着就是寻常的GNN Aggregation，先在K个图上做Intra-layer Aggregation，得到所有data sample的aggregated representation，假设有N个sample，那么就会得到K * N个sample。之后再做Inter-layer Aggregation，将一个data sample的K个representation进行聚合，得到N个sample的N个representation。而这两个aggregation的图聚合方法有多种选择，比如GAT、GCN、GraphSage都是可行的。
 
 至此为止，TabGNN的核心就结束了，我们通过一系列GNN操作，从N个data sample的raw representation，得到了N个aggregated representation（有点类似于feature generation了哈哈哈）。这N个aggregated representation会和raw representation一起进入任意一个预测模型，比如论文中AutoFE，或者其他FM系列。因此TabGNN可以作为一个插件为其他模型提点。
+
+## Retrieval & Interaction Machine for Tabular Data Prediction
+
+链接：[https://arxiv.org/abs/2108.05252](https://arxiv.org/abs/2108.05252)
+
+关键词：RIM, Sample Relation
+
+是APEX实验室学长的工作，个人认为是在RecSys领域的Search-based Model的前沿工作了。文章的motivation很简单，推荐系统的CTR预测之类的，本质上可以看做是表格数据预测（tabular data prediction），大部分推荐模型（比如FM系列）都只是建模feature interaction，也就是列与列之间的关系，而行与行之间的关系，还没有工作去研究过，也就是cross-row relation。最简单的例子就是，两个相似的data sample，会在prediction上有相似的结果，因此可以互相指导。
+
+![RIM](./images/RIM.JPG)
+
+因此，在Search阶段，文章将tabular data的每一行视为一个document（换到推荐领域，就是一个data sample），每一行中的一个feature就是一个word，利用搜索引擎进行检索，在利用BM25算法进行精排，为每一个data sample得出一个retrieved sample set（类似于构造了K个相似邻居）。接着用常见的feature interaction的手法，对这些retrieved sample进行聚合，得到prediction。值得注意的是，retrieved sample的label也要直接参与计算，因为这其实就类似于一个投票过程，feature和target sample相似的retrieved sample会做出怎么样的行为（label），这为target sample prediction做出了辅助。
+
+最后提及的一点是这样的，实践中我发现，Search阶段，原始的BM25算法在针对推荐领域表格数据的检索排序中会有如下两个问题：
+
+1. 推荐系统表格数据的特征域field基本都为单值域，因此一个document中的每个word都至多出现一次（非0即1），这会导致BM25算法直接退化为IDF
+2. 根据BM25中IDF项的计算公式可知，如果一个word在整个语料库（即所有表格数据中）的出现次数超过半数，那IDF的权重就会变成负数，则这个word对整体分数的贡献就会是负值！这一点的初衷是好的，也就是一些极为常见的词（is/my/are）等，不应该表征这个document，但是在推荐领域经常有这样的feature存在
+
+解决方案上，第一点我没有想到很好的解决方案，但是第二点可以参考elasticsearch和lucene的优化方法，IDF计算改用如下公式，来保证IDF项始终为正数：
+
+![RIM-1](./images/RIM-1.JPG)
+
