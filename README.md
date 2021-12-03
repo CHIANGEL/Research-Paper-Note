@@ -440,13 +440,13 @@ AutoInt和xDeepFM一样提出了一个核心模块Interacting layer，利用mult
 
 链接：[https://arxiv.org/abs/2006.04153](https://arxiv.org/abs/2006.04153)
 
-关键词：ADT, Denoise, Noise Label, Implicit Feedback, Recommendation
+关键词：ADT, Denoise, Noisy Label, Implicit Feedback, Recommendation
 
-目前关于Learning with Noise Label的工作主要集中在CV领域，Noise Label在Recommender领域的定义本身就比较模糊，甚至很多人会把noise和bias混为一谈，本文可以说是第一篇为推荐领域明确定义了Noise Label的概念（之前也有工作focus在推荐领域的nosie label上）并且提出了无需额外数据即可达成denoise目标的训练方法。
+目前关于Learning with Noisy Label的工作主要集中在CV领域，Noisy Label在Recommender领域的定义本身就比较模糊，甚至很多人会把noise和bias混为一谈，本文可以说是第一篇为推荐领域明确定义了Noisy Label的概念（之前也有工作focus在推荐领域的nosie label上）并且提出了无需额外数据即可达成denoise目标的训练方法。
 
-首先我们来定义在推荐系统领域下，什么是Noise Label。在推荐领域，我们往往认为Click即为一种Positive Feedback，但其实很多时候，用户的点击并不能真正代表他的喜好。比如我因为标题党点进了一篇新闻/推送/视频等，但是估计我一进去两三秒就发现不对，直接退出，这样的Click就是一种Noise。再举一个例子，在电商中，用户可能会点击或者购买某一个产品，但是最终却会给出一个较低的评分（rating），这时候的Click我们也认为是一种Noise。综上所述，如果一个Click发生，但是却并不能反映用户的**真实**喜好，那么这个Click就是Noise，在论文中被称为false-positive interaction。而衡量false-positive自然需要一些额外信息，比如用户点进去的停留时间（dwell time）或给出的评分（rating）。
+首先我们来定义在推荐系统领域下，什么是Noisy Label。在推荐领域，我们往往认为Click即为一种Positive Feedback，但其实很多时候，用户的点击并不能真正代表他的喜好。比如我因为标题党点进了一篇新闻/推送/视频等，但是估计我一进去两三秒就发现不对，直接退出，这样的Click就是一种Noise。再举一个例子，在电商中，用户可能会点击或者购买某一个产品，但是最终却会给出一个较低的评分（rating），这时候的Click我们也认为是一种Noise。综上所述，如果一个Click发生，但是却并不能反映用户的**真实**喜好，那么这个Click就是Noise，在论文中被称为false-positive interaction。而衡量false-positive自然需要一些额外信息，比如用户点进去的停留时间（dwell time）或给出的评分（rating）。
 
-之前也有不少工作是针对这样的Noise Label（即推荐领域中的false-positive interaction），但这些工作往往都需要在训练中加入额外信息（比如停留时间或评分）来指导识别可能的noisy sample，但是如此方法的缺点在于，本身click信息就已经是稀疏的，这些方法要求在click的同时还要具备评分等额外信息，于是就是稀上加稀，难以训练，也不现实。而本文提出的ADT方法，是不需要在训练中加入额外信息，就可以做到denoise的。
+之前也有不少工作是针对这样的Noisy Label（即推荐领域中的false-positive interaction），但这些工作往往都需要在训练中加入额外信息（比如停留时间或评分）来指导识别可能的noisy sample，但是如此方法的缺点在于，本身click信息就已经是稀疏的，这些方法要求在click的同时还要具备评分等额外信息，于是就是稀上加稀，难以训练，也不现实。而本文提出的ADT方法，是不需要在训练中加入额外信息，就可以做到denoise的。
 
 从方法上看，ADT其实就是一种sample reweighting的思路。因为noise sample的特点就是难以拟合，所以训练过程中loss偏大的sample更可能是noise sample，则我们应该要降低这些sample的权重，使得网络的更新偏重于那些loss更低、更可能是clean sample的样本。ADT有两种reweighting方法，一种是直接截断，即loss大于某个阈值的sample的loss直接手动归零（阈值会随训练进程而变化，因为整体loss会随着拟合过程下降），。另一种则是给每一个sample加上一个动态的reweighting系数，这个系数是和model预测的[0,1]的click rate有关，预测的点击率越接近0.5，说明model对这个sample的预测越不确定，就越有可能是noise sample，则权重更低。
 
@@ -456,11 +456,11 @@ AutoInt和xDeepFM一样提出了一个核心模块Interacting layer，利用mult
 
 链接：[https://arxiv.org/abs/1804.06872](https://arxiv.org/abs/1804.06872)
 
-关键词：Co-teaching, Noise Label, Denoise
+关键词：Co-teaching, Noisy Label, Denoise
 
 本文提出了一种新的训练模式（learning paradigm），基于经典假设：Noise Sample的Loss会比Clean Sample更大，网络可以据此判断哪些更可能是clean sample。Co-teaching同时训练两个网络，每一个mini-batch，两个网络都会根据自己计算的loss挑选出一部分可能的clean sample，然后喂给彼此进行更新。
 
-Co-teaching需要解答的一个问题就在于，为什么网络自己挑出来的clean sample，不给自己做update，而是要喂给别人进行update呢？文章给出的解释是，用自己挑出来的clean sample进行更新，就类似于boosting，会对noise label等异常样本非常敏感。而Co-teaching的方式中，两个网络会学到略有不同的decision boundary，因此可以给彼此纠错。文章举的一个形象例子是，一个学生做题，自查很难发现自己的错误，但如果两个学生互查，就可以找到彼此的错误。但是这个说法其实没有太说服我，用自己调出来的sample做训练，其实就是一种sample reweighting的方法， 把可能是noise sample的直接loss归零，这是存在的方法，只是denoise性能上无从比较。
+Co-teaching需要解答的一个问题就在于，为什么网络自己挑出来的clean sample，不给自己做update，而是要喂给别人进行update呢？文章给出的解释是，用自己挑出来的clean sample进行更新，就类似于boosting，会对Noisy Label等异常样本非常敏感。而Co-teaching的方式中，两个网络会学到略有不同的decision boundary，因此可以给彼此纠错。文章举的一个形象例子是，一个学生做题，自查很难发现自己的错误，但如果两个学生互查，就可以找到彼此的错误。但是这个说法其实没有太说服我，用自己调出来的sample做训练，其实就是一种sample reweighting的方法， 把可能是noise sample的直接loss归零，这是存在的方法，只是denoise性能上无从比较。
 
 ## Neural Collaborative Filtering
 
@@ -484,7 +484,7 @@ NCF是率先将NN引入RecSys/IR领域的文章之一，但是这边文章本身
 
 链接：[https://arxiv.org/abs/1706.02613](https://arxiv.org/abs/1706.02613)
 
-关键词：Decoupling, Noise Label, Denoise
+关键词：Decoupling, Noisy Label, Denoise
 
 这篇文章的核心思想还是针对所谓的“small loss”进行，即noise sample类似于hard sample，前期loss较大。而神经网络的拟合规律是先拟合简单样本，再拟合困难样本。因此Decoupling提出，应该让神经网络在训练前期拟合batch data中的大部分数据，随着训练的进行，batch中用来拟合的数据也应该越来越少。
 
@@ -496,7 +496,7 @@ Decoupling算法很简单，文章用很大的篇幅从理论上讨论了这种u
 
 链接：[https://arxiv.org/abs/1901.04215](https://arxiv.org/abs/1901.04215)
 
-关键词：Co-teaching+, Noise Label, Denoise
+关键词：Co-teaching+, Noisy Label, Denoise
 
 这篇文章就是结合了co-teaching和decoupling两种方法的结合体，即同时训练两个网络，两个网络结构一致，只是参数随机初始化不同，然后对每一个batch的data，我们首先选取两个网络预测产生分歧的样本组成样本备选集（disagreement），接着我们在这个备选集上进行co-teaching，即两个网络各自选出自己认为loss较小的部分喂给对方进行梯度更新。通过两个网络的分歧选备选集是decoupling的方法，而之后选loss小的样本喂给对方则是co-teaching的方法。这篇文章在方法层面指出了denoise的三点有效的方法：
 
@@ -859,3 +859,59 @@ TabGNN的目标也是去利用data sample的relation，所以我在目录中把�
 
 ![RIM-1](./images/RIM-1.JPG)
 
+## Combating noisy labels by agreement: A joint training method with co-regularization
+
+链接：[https://arxiv.org/abs/2003.02752](https://arxiv.org/abs/2003.02752)
+
+关键词：JoCoR, Noisy Label, Denoise
+
+JoCoR也是Co-teaching一脉的工作，下图直观展示了JoCoR和之前Co-teaching工作的区别。Decoupling是选取两个网络预测有分歧的样本用于模型训练，Co-teaching则是让两个网络给对方挑选自己认为的干净样本，Co-teaching+则是在两个网络预测有分歧的样本上挑small-loss samples，而JoCoR则是让两个网络同时参与干净样本筛选过程，并且两个网络同时更新，且通过Co-Regularization使两个网络的预测趋于一致。
+
+<img src="./images/JoCoR-1.JPG" width="600px">
+
+CV denoise工作有一个很广泛的共识：small-loss criterion，即loss小的样本更可能是干净样本。但是这个鉴别标准无法分清噪声样本（noisy sample）和困难样本（hard sample）的区别，因为网络在困难样本上的loss往往也是偏大的。因此，JoCoR提出不仅要用small-loss criterion，还要用model-agreement criterion（这个词是我自己想的），即两个不同网络在干净样本（不论是简单还是困难样本）上的预测往往是一致的，而在噪声样本上的预测则往往是不一致的。
+
+基于small-loss criterion和model-agreement criterion两个噪声/干净样本筛选准则，JoCoR维护了两个结构相同、初始化不同的网络，并给出了筛选标准：
+
+<img src="./images/JoCoR-2.JPG" width="300px">
+
+其中第一项就是两个网络各自的cross-entropy loss之和，CE Loss越小，对应样本越可能是干净样本，代表small-loss criterion；第二项则是两个网络各自预测结果的JS Divergence，两个网络的预测结果越一致，则JS散度越小，对应样本越可能是干净样本，代表model-agreement criterion。
+
+有了筛选标准，对每轮给定的batch data，我们可以筛选出一定比例（这个比例也会随epoch增长而变化，是denoise工作的常见设置）的“干净样本”用于后续更新。JoCoR中的两个网络是同时更新的，用于网络更新的损失函数和上面的筛选标准一直，即包含了CE Loss和JS Loss（原文中JS Loss被称为Co-Regularization Loss）两项。
+
+可以发现，JoCoR似乎和之前的工作Decoupling有根本上的分歧！Decoupling是筛选出两个网络预测有分歧的样本用于更新，而JoCoR则是要选出两个网络预测没有过大分歧的样本用于更新，似乎在践行方法论上是完全相反的。关于这一点，原文作者给出了这样的解释，即JoCoR和Decoupling在做的事情其实是一样的，即通过参数更新让两个网络的预测趋于一致，Decoupling的做法是让两个网络只在预测有分歧的样本上更新，以期望使两个网络逐渐趋于一致；而JoCoR则是直接显式的最小化两个网络预测结果的JS散度，更直接也更有效。虽然这个解释有合理的地方，但在方法论层面上，我还是会觉得Decoupling有不妥之处，因为根据model-agreement criterion，两个网络预测有分歧的样本大概率是噪声样本，那Decoupling还要拿这些大概率是噪声的样本去更新网络，本身就不合理。
+
+## Co-learning: Learning from Noisy Labels with Self-supervision
+
+链接：[https://arxiv.org/abs/2108.04063](https://arxiv.org/abs/2108.04063)
+
+关键词：Co-learning, Noisy Label, Denoise, Self-supervision
+
+Co-learning也可以理解为是基于JoCoR的denoise算法，但差别还是很大的。原文作者也用一张图给出了几种denoise算法的区别，前四种算法的基本思想已经在JoCoR的论文笔记中讲过。
+
+<img src="./images/Co-learning-1.JPG" width="600px">
+
+原文作者指出，这些维护两个结构相同、参数不同的网络模型的算法，本质上其实是针对同一份数据提供了两种视角（two different views towards the same data），然后通过不同视角的对比（比如Decoupling和JoCoR都是让两种view逐渐趋于一致），达到两个网络denoise的目的。而之前这些工作，视角的不同完全来自于不同的随机初始化，而Co-learning则是跳脱出了这个限制，通过自监督+有监督两种不同任务来提供不同的视角view。模型结构如下图所示：
+
+<img src="./images/Co-learning-2.JPG" width="600px">
+
+上图中的encoder $f$是backbone，比如常见的ResNet/VGG，负责将input image转为feature vector $u$；classifier head $g$是有监督学习模块，负责将feature vector $u$转为分类概率$y$，也是最后的模型输出；projection head $h$是自监督模块，是一个MLP，对feature vector $u$进行进一步特征抽取和映射，输出还是一个feature vector $v$。损失函数如下所示：
+
+<img src="./images/Co-learning-3.JPG" width="300px">
+
+第一项是常见的交叉熵分类损失，有classifier head的输出$y$计算得到，但因为自监督学习部分的收敛速度较慢，因此作者加入了MixUp的数据增强方法，来延缓有监督学习模块的收敛速度，关于MixUp的内容不是本文denoise的核心，因此略去，具体可以参考[这个链接](https://arxiv.org/abs/1710.09412)。
+
+第二项是intrinsic similarity loss，由projection head的输出$v$得到，是一个常见的自监督损失InfoNCE：
+
+<img src="./images/Co-learning-4.JPG" width="300px">
+
+前两项都是两个head各自独立计算，本质上，两个head提供了针对相同数据的不同视角，我们希望能够让他们俩在预测上趋于一致。之前的Co-teaching系列工作，因为两个视角是相同结构的网络，因此可以直接通过JS散度或预测结果是否一致来判断视角的一致程度，但在这里，两个视角分别源于有监督和自监督任务，一个输出是概率分布$y$，一个输出是特征向量$v$，不能直接比较，因此作者提出，不同的图片$i,j,t$会被两个head映射到不同的子空间$Y$和$U$，这些图片在每个子空间的相对位置关系应该要保持一致，如下图所示：
+
+<img src="./images/Co-learning-5.JPG" width="600px">
+
+如此，我们得到了让两种视角逐渐趋于一致的具体方法，首先用L2距离分别计算两个子空间中的图片两两之间的距离$d(v^{(i)},v^{(j)})$，并通过高斯分布将距离映射为概率值，之后去最小化两个子空间上得到的概率分布的KL散度即可，损失函数的第三项structural similarity loss如下所示：
+
+<img src="./images/Co-learning-6.JPG" width="300px">
+<img src="./images/Co-learning-7.JPG" width="300px">
+
+实验结果上，Co-learning的效果可以说是吊打best baseline JoCoR，我觉得原因在于噪声样本的noise主要源于label，即label-dependent feature。Co-learning没有去做任何的样本筛选，而是通过自监督模块对所有样本的label-independent feature都进行了合理运用；又通过最小化两个不同视角的差异，来降低噪声样本的label-dependent feature带来的影响，从而达到更好的denoise效果。当然，Co-learning通过构造两个不同任务来提供针对相同数据的不同视角，也是足够有趣的。

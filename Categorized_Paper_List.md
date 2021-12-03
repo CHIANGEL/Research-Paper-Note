@@ -11,7 +11,7 @@ All papers introduced in [README.md](README.md) are categorized here into severa
 - [Search-based Recommendation](#Search-based_Recommendation)
 - [User Modeling](#User_Modeling)
 - [Graph Neural Network](#Graph_Neural_Network)
-- [Noise Label](#Noise_Label)
+- [Noisy Label](#Noisy_Label)
 - [Music Recommendation](#Music_Recommendation)
 - [Online Learning to Rank](#Online_Learning_to_Rank)
 - [Machine Learning](#Machine_Learning)
@@ -126,15 +126,23 @@ All papers introduced in [README.md](README.md) are categorized here into severa
 
 --------------------------------------------------------
 
-<h2 id="Noise_Label">Noise Label</h2>
+<h2 id="Noisy_Label">Noisy Label</h2>
 
-[[Link](https://arxiv.org/abs/2006.04153)] Denoising Implicit Feedback for Recommendation
+### Noisy Label in CV
 
 [[Link](https://arxiv.org/abs/1706.02613)] Decoupling "when to update" from "how to update"
 
 [[Link](https://arxiv.org/abs/1804.06872)] Co-teaching: Robust Training of Deep Neural Networks with Extremely Noisy Labels
 
 [[Link](https://arxiv.org/abs/1901.04215)] How does Disagreement Help Generalization against Label Corruption?
+
+[[Link](https://arxiv.org/abs/2003.02752)] Combating noisy labels by agreement: A joint training method with co-regularization
+
+[[Link](https://arxiv.org/abs/2108.04063)] Co-learning: Learning from Noisy Labels with Self-supervision
+
+### Noisy Label in RecSys
+
+[[Link](https://arxiv.org/abs/2006.04153)] Denoising Implicit Feedback for Recommendation
 
 --------------------------------------------------------
 
