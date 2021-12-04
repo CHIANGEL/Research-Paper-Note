@@ -912,6 +912,25 @@ Co-learning也可以理解为是基于JoCoR的denoise算法，但差别还是很
 如此，我们得到了让两种视角逐渐趋于一致的具体方法，首先用L2距离分别计算两个子空间中的图片两两之间的距离$d(v^{(i)},v^{(j)})$，并通过高斯分布将距离映射为概率值，之后去最小化两个子空间上得到的概率分布的KL散度即可，损失函数的第三项structural similarity loss如下所示：
 
 <img src="./images/Co-learning-6.JPG" width="300px">
+
 <img src="./images/Co-learning-7.JPG" width="300px">
 
 实验结果上，Co-learning的效果可以说是吊打best baseline JoCoR，我觉得原因在于噪声样本的noise主要源于label，即label-dependent feature。Co-learning没有去做任何的样本筛选，而是通过自监督模块对所有样本的label-independent feature都进行了合理运用；又通过最小化两个不同视角的差异，来降低噪声样本的label-dependent feature带来的影响，从而达到更好的denoise效果。当然，Co-learning通过构造两个不同任务来提供针对相同数据的不同视角，也是足够有趣的。
+
+## Implicit Feedbacks are Not Always Favorable: Iterative Relabeled One-Class Collaborative Filtering against Noisy Interactions
+
+链接：[https://dl.acm.org/doi/pdf/10.1145/3474085.3475446](https://dl.acm.org/doi/pdf/10.1145/3474085.3475446)
+
+关键词：Iterative Relabel, Noisy Label, Denoise
+
+这篇工作应该是follow了我之前Paper Note里提过的文章Denoising Implicit Feedback for Recommendation，做的同样是推荐系统领域的denoise问题。总体而言，推荐系统会被建模成二分类问题（本文标题的单分类协同过滤是一个道理），因此不同于CV领域，RecSys领域的噪声样本可以简单分为两类：false-positive sample和false-negative sample。前者是正样本（user click）但并不能是用户真正喜欢的，后者是负样本（user non-click）但其实是符合用户喜好的。另一方面，另一个推荐系统/信息检索领域的各种bias，可以理解为是噪声样本的诸多成因之一，即denoise方法是统一的解决bias的一种方法。
+
+之前的T-CE/R-CE是sample reweighting的方法，根据small-loss criterion原则，选出可能是噪声的样本，然后直接loss置零或降低loss的权重，以减小该样本对模型训练的影响。而本文退出的IR（Iterative Relabel）方法则是一种relabel方法，即直接将原数据集的label进行重写，然后再在新的label上进行训练。
+
+推荐模型，最终是给出对每一个item的打分，分数越高的item排的越前面。
+
+对于原本的正样本（positive sample），分数越低，就越可能是噪声样本，因此作者将这些正样本按照打分重新排序并分成前后三段，分数最高的一段仍然标记为正样本；分数最低的一段我们认为是false-positive sample，标记成负样本；而中间那一段为potential positive sample，我们首先计算分数最高段和分数最低段的item feature vector的中心点（简单取平均即可），则potential positive sample离哪一个中心更近，就标记成哪一类样本。
+
+对于原本的负样本（negative sample），分数越高，就越可能是噪声样本，因此作者也将负样本按照打分重新排序，取了分数最高的前一段重新标记为正样本（即这些item是false-negative sample），其他的仍然标记为负样本，没有正样本标记中的potential positive sample的概念。
+
+以上就是relabel的方法，非常简单直接，判断标准就是：对于正/负样本，分数越低/高，就越有可能是噪声样本。那么标题中的iterative则体现在，我们会重复这个过程：Train CF->Relabel->Train CF->Relabel->……。每次Train CF用到的共现矩阵都是上一轮Relabel得到的pseudo-label，如此反复，直至收敛。

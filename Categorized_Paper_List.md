@@ -144,6 +144,8 @@ All papers introduced in [README.md](README.md) are categorized here into severa
 
 [[Link](https://arxiv.org/abs/2006.04153)] Denoising Implicit Feedback for Recommendation
 
+[[Link](https://dl.acm.org/doi/pdf/10.1145/3474085.3475446)] Implicit Feedbacks are Not Always Favorable: Iterative Relabeled One-Class Collaborative Filtering against Noisy Interactions
+
 --------------------------------------------------------
 
 <h2 id="Music_Recommendation">Music Recommendation</h2>
